@@ -35,11 +35,15 @@
   <version>0.1-SNAPSHOT</version>
   <packaging>xar</packaging>
   <description>Provides a list of pages which could be interesting for the user, based on his history and the pages content.</description>
+  <scm>
+    <connection>scm:git:git://github.com/xwiki-labs/application-recommendations.git</connection>
+    <developerConnection>scm:git:git@github.com:xwiki-labs/application-recommendations.git</developerConnection>
+    <url>https://github.com/xwiki-labs/application-recommendations</url>
+  </scm>
   <developers>
     <developer>
       <id>yflory</id>
       <name>Yann Flory</name>
-      <organization>XWiki SAS</organization>
     </developer>
   </developers>
   <properties>
