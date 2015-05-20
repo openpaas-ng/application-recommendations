@@ -31,9 +31,9 @@
   <author>xwiki:XWiki.Admin</author>
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
-  <creationDate>1430926461000</creationDate>
-  <date>1431339415000</date>
-  <contentUpdateDate>1431339415000</contentUpdateDate>
+  <creationDate>1430922861000</creationDate>
+  <date>1432110191000</date>
+  <contentUpdateDate>1432107293000</contentUpdateDate>
   <version>1.1</version>
   <title>Recommendation Engine Config Class</title>
   <defaultTemplate/>
@@ -90,20 +90,6 @@
       <validationRegExp/>
       <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
     </easyrecTenantId>
-    <recommendHidden>
-      <customDisplay/>
-      <defaultValue>0</defaultValue>
-      <disabled>0</disabled>
-      <displayFormType>radio</displayFormType>
-      <displayType/>
-      <name>recommendHidden</name>
-      <number>4</number>
-      <prettyName>Recommend hidden pages</prettyName>
-      <unmodifiable>0</unmodifiable>
-      <validationMessage/>
-      <validationRegExp/>
-      <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-    </recommendHidden>
   </class>
   <object>
     <class>
