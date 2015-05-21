@@ -32,7 +32,7 @@
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>application-recommendations</artifactId>
   <name>Recommendations Application</name>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.2-SNAPSHOT</version>
   <packaging>xar</packaging>
   <description>Provides a list of pages which could be interesting for the user, based on his history and the pages content.</description>
   <scm>
@@ -49,6 +49,8 @@
   <properties>
     <!-- Don't run CLIRR here since there's no Java code. -->
     <xwiki.clirr.skip>true</xwiki.clirr.skip>
+    <xwiki.extension.name>Recommendations Application</xwiki.extension.name>
+    <xwiki.extension.category>application</xwiki.extension.category>
   </properties>
   <build>
     <!-- Needed to add support for the XAR packaging -->
