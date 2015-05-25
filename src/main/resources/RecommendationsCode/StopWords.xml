@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
+<xwikidoc>
+  <web>RecommendationsCode</web>
+  <name>StopWords</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>RecommendationsCode.GetProfileContent</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1432538359000</creationDate>
+  <date>1432555389000</date>
+  <contentUpdateDate>1432543706000</contentUpdateDate>
+  <version>1.1</version>
+  <title/>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>true</hidden>
+  <content>class StopWords {
+  def getStopWords(locale) {
+    if(locale == 'fr') {
+      return ["a", "afin", "ai", "ainsi", "apres", "attendu", "au", "aujourd", "auquel", "aussi",
+        "autre", "autres", "aux", "auxquelles", "auxquels", "avait", "avant", "avec", "avoir",
+        "c", "car", "ce", "ceci", "cela", "celle", "celles", "celui", "cependant", "certain",
+        "certaine", "certaines", "certains", "ces", "cet", "cette", "ceux", "chez", "ci",
+        "combien", "comme", "comment", "concernant", "contre", "d", "dans", "de", "debout",
+        "dedans", "dehors", "dela", "depuis", "derriere", "des", "desormais",
+        "desquelles", "desquels", "dessous", "dessus", "devant", "devers", "devra", "divers",
+        "diverse", "diverses", "doit", "donc", "dont", "du", "duquel", "durant", "dus",
+        "elle", "elles", "en", "entre", "environ", "est", "et", "etait", "etc", "etre", "eu", "eux",
+        "excepte", "hormis", "hors", "helas", "hui", "il", "ils", "j", "je", "jusqu",
+        "jusque", "l", "la", "laquelle", "le", "lequel", "les", "lesquelles", "lesquels", "leur",
+        "leurs", "lorsque", "lui", "la", "ma", "mais", "malgre", "me", "merci", "mes",
+        "mien", "mienne", "miennes", "miens", "moi", "moins", "mon", "moyennant", "meme",
+        "memes", "n", "ne", "ni", "non", "nos", "notre", "nous", "neanmoins",
+        "notre", "notres", "on", "ont", "ou", "outre", "ou", "par", "parmi",
+        "partant", "pas", "passe", "pendant", "plein", "plus", "plusieurs", "pour",
+        "pourquoi", "proche", "pres", "puisque", "qu", "quand", "que", "quel", "quelle",
+        "quelles", "quels", "qui", "quoi", "quoique", "revoici", "revoila", "s", "sa",
+        "sans", "sauf", "se", "selon", "seront", "ses", "si", "sien", "sienne", "siennes",
+        "siens", "sinon", "soi", "soit", "son", "sont", "sous", "suivant", "sur", "ta", "te",
+        "tes", "tien", "tienne", "tiennes", "tiens", "toi", "ton", "tous", "tout", "toute",
+        "toutes", "tu", "un", "une", "va", "vers", "voici", "voila", "vos", "votre", "vous",
+        "vu", "votres", "y", "ca", "es", "ete", "o", "avez", "parce", "suis"];
+    }
+    else {
+      return ["the", "of", "and", "a", "to", "in", "is", "you", "that", "it", "he", "was", "for", "on",
+          "are", "as", "with", "his", "they", "i", "at", "be", "this", "have", "from", "or", "one",
+          "had", "by", "but", "not", "what", "all", "were", "we", "when", "your", "can", "said",
+          "there", "use", "an", "each", "which", "she", "do", "how", "their", "if", "will", "up",
+          "other", "about", "out", "many", "then", "them", "these", "so", "some", "her", "would",
+          "make", "like", "him", "into", "time", "has", "look", "two", "more", "go", "see", "no",
+          "way", "could", "my", "than", "first", "been", "call", "who", "its", "now", "find", "long",
+          "down", "day", "did", "get", "come", "may"];
+    }
+  }
+}</content>
+</xwikidoc>
