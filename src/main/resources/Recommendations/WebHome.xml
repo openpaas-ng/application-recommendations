@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1430924288000</creationDate>
-  <date>1432130418000</date>
-  <contentUpdateDate>1432130195000</contentUpdateDate>
+  <date>1432556652000</date>
+  <contentUpdateDate>1432554559000</contentUpdateDate>
   <version>1.1</version>
   <title>WebHome</title>
   <defaultTemplate/>
@@ -49,6 +49,7 @@ def recConfigDoc = xwiki.getDocument('RecommendationsCode.RecEngineConfig');
 def easyrecAddress = recConfigDoc.get('easyrecServerAddress');
 def easyrecApiKey = recConfigDoc.get('easyrecApiKey');
 def easyrecTenantId = recConfigDoc.get('easyrecTenantId');
+def jsonSlurper = new JsonSlurper();
 
 if(easyrecAddress.isEmpty() || easyrecApiKey.isEmpty() || easyrecTenantId.isEmpty()) {
   println "You have to set up an easyrec server in order to use this extension";
@@ -59,6 +60,7 @@ else {
     recommendationType = (request.get('type')).toInteger();
   }
   def queryURL = "";
+  def recommendations2 = [];
   /* 
   Type 1 : recommendations for user
   Type 2 : other users also viewed ...
@@ -78,10 +80,11 @@ else {
     queryURL = easyrecAddress+'api/1.0/json/relateditems?assoctype=PROFILE_SIMILARITY&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+docName;
   }
   else {
-    queryURL = easyrecAddress+'api/1.0/json/recommendationsforuser?apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+xcontext.getUser();
+    queryURL = easyrecAddress+'api/1.0/json/recommendationsforuser?actiontype=VIEW&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+xcontext.getUser()+'&amp;numberOfResults=100';
+    queryURL2 = easyrecAddress+'api/1.0/json/recommendationsforuser?actiontype=EDIT&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+xcontext.getUser()+'&amp;numberOfResults=100';
   }
+
   def userRec = xwiki.getURLContent(queryURL);
-  def jsonSlurper = new JsonSlurper();
   def userRecObject = jsonSlurper.parseText(userRec);
   def recommendations = ""
   if(userRecObject.recommendeditems == null) { // easyrec v0.99 (beta)
@@ -91,10 +94,23 @@ else {
     recommendations = userRecObject.recommendeditems.item; 
   }
 
+  if(!(recommendationType in [2, 3, 4])) {
+    def userRec2 = xwiki.getURLContent(queryURL2);
+    def userRecObject2 = jsonSlurper.parseText(userRec2);
+    if(userRecObject2.recommendeditems == null) {
+      recommendations2 = userRecObject2.recommendedItems; 
+    }
+    else {
+      recommendations2 = userRecObject2.recommendeditems.item; 
+    }
+    recommendations.remove(recommendations2);
+    recommendations.addAll(recommendations2);
+    Collections.shuffle(recommendations);
+  }
   if(userRecObject.recommendeditems != null || userRecObject.recommendedItems != null) {
 
     def displayHidden = 1;
-    if(xcontext.getUser() == "XWiki.XWikiGuest" || xwiki.getDocument(xcontext.getUser()).getObject('XWiki.XWikiUsers').getProperty('displayHiddenDocuments') == null || xwiki.getDocument(xcontext.getUser()).getObject('XWiki.XWikiUsers').getProperty('displayHiddenDocuments').value == 0) {
+    if(!xcontext.userReference || xwiki.getDocument(xcontext.getUser()).getObject('XWiki.XWikiUsers').getProperty('displayHiddenDocuments') == null || xwiki.getDocument(xcontext.getUser()).getObject('XWiki.XWikiUsers').getProperty('displayHiddenDocuments').value == 0) {
       displayHidden = 0;
     }
 
