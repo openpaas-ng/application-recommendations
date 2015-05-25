@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431950115000</creationDate>
-  <date>1432557587000</date>
-  <contentUpdateDate>1432557587000</contentUpdateDate>
+  <date>1432558654000</date>
+  <contentUpdateDate>1432558654000</contentUpdateDate>
   <version>1.1</version>
   <title>Pushscript</title>
   <defaultTemplate/>
@@ -45,10 +45,10 @@
   <content>{{groovy}}
   print "&lt;base&gt;"
   try {
-  def recConfigDoc = xwiki.getDocument('RecommendationsCode.RecEngineConfig');
-  def easyrecAddress = recConfigDoc.get('easyrecServerAddress');
-  def easyrecApiKey = recConfigDoc.get('easyrecApiKey');
-  def easyrecTenantId = recConfigDoc.get('easyrecTenantId');
+  def recConfigDoc = xwiki.getDocument('RecommendationsCode.RecEngineConfig')
+  def easyrecAddress = recConfigDoc.get('easyrecServerAddress')
+  def easyrecApiKey = recConfigDoc.get('easyrecApiKey')
+  def easyrecTenantId = recConfigDoc.get('easyrecTenantId')
   if(easyrecAddress.isEmpty() || easyrecApiKey.isEmpty() || easyrecTenantId.isEmpty()) {
     System.out.println("PUSH PROFILE: wrong easyrec server configuration in XWiki")
     print "&lt;state&gt;0&lt;/state&gt;"
@@ -60,23 +60,23 @@
   if(!request.get("doc") || !xwiki.exists(request.get("doc"))) {
     System.out.println("PUSH PROFILE: No document")
     print "&lt;state&gt;0&lt;/state&gt;"
-    success = false;
+    success = false
   }
   else {
     System.out.println("PUSH PROFILE: Start pushing data from ${pushedDoc}")
 
     def pageContentObj = xwiki.parseGroovyFromPage("RecommendationsCode.GetProfileContent")
-    def title = pushedDoc.getName();
-    def tags = pushedDoc.getTags().toString().replaceAll("\\|", " ");
-    def contentList = pageContentObj.getContentFromDoc(pushedDoc.fullName, xwiki).toString().replaceAll("(\\[|\\]|,)", ""); 
-    def author = pushedDoc.getAuthor();
-    def space = pushedDoc.space;
+    def title = pushedDoc.getName()
+    def tags = pushedDoc.getTags().toString().replaceAll("\\|", " ")
+    def contentList = pageContentObj.getContentFromDoc(pushedDoc.fullName, xwiki).toString().replaceAll("(\\[|\\]|,)", "")
+    def author = pushedDoc.getAuthor()
+    def space = pushedDoc.space
 
-    def profile = URLEncoder.encode("&lt;profile&gt;&lt;title&gt;${title}&lt;/title&gt;&lt;tags&gt;${tags}&lt;/tags&gt;&lt;author&gt;${author}&lt;/author&gt;&lt;space&gt;${space}&lt;/space&gt;&lt;content&gt;${contentList}&lt;/content&gt;&lt;/profile&gt;", "UTF-8");
-    def queryURLItem = "${easyrecAddress}api/1.0/sendaction?actiontype=TEST&amp;apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemdescription=${title}&amp;itemid=${pushedDoc}&amp;itemurl=/xwiki/bin/view/${pushedDoc.space}/${pushedDoc.name}&amp;sessionid=fakesessionidtocreateitems";
-    def queryURL = "${easyrecAddress}api/1.0/profile/store?apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemid=${pushedDoc}&amp;profile=${profile}";
-    def createItem = xwiki.getURLContent(queryURLItem);
-    def sendProfile = xwiki.getURLContent(queryURL);
+    def profile = URLEncoder.encode("&lt;profile&gt;&lt;title&gt;${title}&lt;/title&gt;&lt;tags&gt;${tags}&lt;/tags&gt;&lt;author&gt;${author}&lt;/author&gt;&lt;space&gt;${space}&lt;/space&gt;&lt;content&gt;${contentList}&lt;/content&gt;&lt;/profile&gt;", "UTF-8")
+    def queryURLItem = "${easyrecAddress}api/1.0/sendaction?actiontype=TEST&amp;apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemdescription=${title}&amp;itemid=${pushedDoc}&amp;itemurl=/xwiki/bin/view/${pushedDoc.space}/${pushedDoc.name}&amp;sessionid=fakesessionidtocreateitems"
+    def queryURL = "${easyrecAddress}api/1.0/profile/store?apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemid=${pushedDoc}&amp;profile=${profile}"
+    def createItem = xwiki.getURLContent(queryURLItem)
+    def sendProfile = xwiki.getURLContent(queryURL)
   }
 
   if(success) {
@@ -86,11 +86,11 @@
   }
   catch(e){
     System.out.println("PUSH PROFILE: Exception")
-    e.printStackTrace();
+    e.printStackTrace()
     print "&lt;state&gt;-1&lt;/state&gt;"
     print "&lt;error&gt;${e.message}&lt;/error&gt;"
   }
-    print "&lt;/base&gt;"
-System.out.println("PUSH PROFILE: Done")
+  print "&lt;/base&gt;"
+  System.out.println("PUSH PROFILE: Done")
 {{/groovy}}</content>
 </xwikidoc>
