@@ -22,7 +22,7 @@
 
 <xwikidoc>
   <web>RecommendationsCode</web>
-  <name>ProfilesListener</name>
+  <name>DeletedPagesListener</name>
   <language/>
   <defaultLanguage/>
   <translation>0</translation>
@@ -31,11 +31,11 @@
   <author>xwiki:XWiki.Admin</author>
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
-  <creationDate>1432193470000</creationDate>
-  <date>1432624034000</date>
-  <contentUpdateDate>1432624034000</contentUpdateDate>
+  <creationDate>1432623042000</creationDate>
+  <date>1432624448000</date>
+  <contentUpdateDate>1432624448000</contentUpdateDate>
   <version>1.1</version>
-  <title/>
+  <title>DeletedPagesListener</title>
   <defaultTemplate/>
   <validationScript/>
   <comment/>
@@ -53,44 +53,43 @@ import com.xpn.xwiki.*
 
 class RecommendationsProfilesEventListener implements EventListener
 {
-  def pushReference = new EntityReference("Pushscript", EntityType.DOCUMENT, 
-    new EntityReference("RecommendationsCode", EntityType.SPACE))
-
   String getName()
   {
     // The unique name of this event listener
-    return "profiles"
+    return "inactives"
   }
 
   List&lt;Event&gt; getEvents()
   {
     // The list of events this listener listens to
-    return [new DocumentCreatedEvent(), new DocumentUpdatedEvent()]
+    return [new DocumentDeletedEvent()]
   }
 
   // Called by the Observation Manager when an event matches the list of events returned by getEvents()
   void onEvent(Event event, Object source, Object context)
   {
+      System.out.println("DELETED PAGES LISTENER: "+source.fullName)
     try {
       def xwiki = context.getWiki()
       def configReference = new EntityReference("RecEngineConfig", EntityType.DOCUMENT, 
         new EntityReference("RecommendationsCode", EntityType.SPACE))
       // Prevent sending profiles for blacklisted spaces
-      def blacklistedSpaces = xwiki.getDocument(configReference , context).getObject('RecommendationsCode.RecEngineConfigClass').get('blacklistedSpaces').value
-      if (!blacklistedSpaces.contains(source.space)) {
-        def pushDoc = xwiki.getDocument(pushReference, context)
-        def pushURL = pushDoc.getExternalURL('view', 'doc='+source.fullName, context)
-        def sendProfile = xwiki.getURLContent(pushURL, context)
-      }
+      def configObject = xwiki.getDocument(configReference , context).getObject('RecommendationsCode.RecEngineConfigClass')
+      def easyrecAddress = configObject.get('easyrecServerAddress').value
+      def easyrecApiKey = configObject.get('easyrecApiKey').value
+      def easyrecTenantId = configObject.get('easyrecTenantId').value
+      def queryURL = easyrecAddress+'api/1.0/setitemactive?active=false&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+source.fullName;
+      def deletePage = xwiki.getURLContent(queryURL, context)
+System.out.println("DELETED PAGES LISTENER: OK")
     } catch (Exception e) {
-      System.out.println("PROFILE LISTENER: Exception "+e)
+      System.out.println("DELETED PAGES LISTENER: Exception "+e)
     }
   }
 }
 
 // Register against the Observation Manager
 def observation = Utils.getComponent(ObservationManager.class)
-observation.removeListener("profiles")
+observation.removeListener("inactives")
 def listener = new RecommendationsProfilesEventListener()
 observation.addListener(listener)
 {{/groovy}}</content>
