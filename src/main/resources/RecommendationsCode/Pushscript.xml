@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431950115000</creationDate>
-  <date>1432640494000</date>
-  <contentUpdateDate>1432640494000</contentUpdateDate>
+  <date>1432646863000</date>
+  <contentUpdateDate>1432646863000</contentUpdateDate>
   <version>1.1</version>
   <title>Pushscript</title>
   <defaultTemplate/>
@@ -46,7 +46,13 @@
   print "&lt;base&gt;"
   try {
   def recConfigDoc = xwiki.getDocument('RecommendationsCode.RecEngineConfig')
-  def easyrecAddress = recConfigDoc.get('easyrecServerAddress')
+  def easyrecAddress = ""
+  if(recConfigDoc.get('easyrecInternalAddress')) {
+    easyrecAddress = recConfigDoc.get('easyrecInternalAddress')
+  }
+  else {
+    easyrecAddress = recConfigDoc.get('easyrecServerAddress')
+  }
   def easyrecApiKey = recConfigDoc.get('easyrecApiKey')
   def easyrecTenantId = recConfigDoc.get('easyrecTenantId')
   if(easyrecAddress.isEmpty() || easyrecApiKey.isEmpty() || easyrecTenantId.isEmpty()) {
