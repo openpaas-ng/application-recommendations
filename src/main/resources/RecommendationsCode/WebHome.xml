@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
+<xwikidoc>
+  <web>RecommendationsCode</web>
+  <name>WebHome</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>Main.WebHome</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1432727607000</creationDate>
+  <date>1432730362000</date>
+  <contentUpdateDate>1432729822000</contentUpdateDate>
+  <version>1.1</version>
+  <title>WebHome</title>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>false</hidden>
+  <content>{{info}}
+Before using the Recommendation application, make sure you've installed and set up correctly your easyrec server, following the [[documentation&gt;&gt;http://extensions.xwiki.org/xwiki/bin/view/Extension/RecommendationsApplication#HConfiguration||rel="__blank"]].
+{{/info}}
+
+== Application configuration ==
+
+
+To be able to use the application, please fill the [[administration page&gt;&gt;path:/xwiki/bin/admin/XWiki/XWikiPreferences?editor=globaladmin&amp;section=Recommendation+Engine]].
+
+{{warning}}
+The application send AJAX queries to the easyrec server. If your website is secured with HTTPS, you should have an easyrec server also secured to avoid "mixed content" issues. However, when it's possible, the application communicate directly with the easyrec server (communication between your XWiki server and your easyrec server) and you may require an HTTP connection between the servers. You can specify that HTTP server address in the field dedicated to communication between servers.
+{{/warning}}
+
+If left empty, the easyrec address used for internal communications will be the same as the easyrec address for AJAX queries.
+
+== Load existing data into the easyrec database ==
+
+
+To receive content-based recommendations about the existing pages of your wiki, you can send their profile to easyrec using [[that page&gt;&gt;RecommendationsCode.SendProfile]].
+Profiles contain the 5 most used words, the author, the title, the tags and the space of the page.
+
+== Add stop words for the content-based recommendations ==
+
+
+To receive more relevant recommendations, you can choose the list of words which will be ignored while searching the 5 most used words of the page. It prevents the recommendation engine from linking 2 pages because they have a lot of "the" in their content.
+To do so, you just have to add these words in the [[Stop Words list&gt;&gt;RecommendationsCode.StopWords]]. You can also add stop words for a new language with a new "else if" statement.</content>
+</xwikidoc>
