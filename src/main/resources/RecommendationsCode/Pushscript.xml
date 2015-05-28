@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431950115000</creationDate>
-  <date>1432794236000</date>
-  <contentUpdateDate>1432794236000</contentUpdateDate>
+  <date>1432819508000</date>
+  <contentUpdateDate>1432819508000</contentUpdateDate>
   <version>1.1</version>
   <title>Pushscript</title>
   <defaultTemplate/>
@@ -43,8 +43,7 @@
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
   <content>{{groovy}}
-  print "&lt;base&gt;"
-  try {
+try {
   def recConfigDoc = xwiki.getDocument('RecommendationsCode.RecEngineConfig')
   def easyrecAddress = ""
   if(recConfigDoc.get('easyrecInternalAddress')) {
@@ -57,15 +56,10 @@
   def easyrecTenantId = recConfigDoc.get('easyrecTenantId')
   if(easyrecAddress.isEmpty() || easyrecApiKey.isEmpty() || easyrecTenantId.isEmpty()) {
     System.out.println("PUSH PROFILE: wrong easyrec server configuration in XWiki")
-    print "&lt;state&gt;0&lt;/state&gt;"
-    success = false
   }
-  def nbre = 0
   def pushedDoc = xwiki.getDocument(request.doc)
-  def success = true
   if(!request.get("doc") || !xwiki.exists(request.get("doc"))) {
-    print "&lt;state&gt;0&lt;/state&gt;"
-    success = false
+    System.out.println("PUSH PROFILE: No document")
   }
   else {
     def pageContentObj = xwiki.parseGroovyFromPage("RecommendationsCode.GetProfileContent")
@@ -85,18 +79,9 @@
     def createItem = xwiki.getURLContent(queryURLItem)
     def sendProfile = xwiki.getURLContent(queryURL)
   }
-
-  if(success) {
-    print "&lt;state&gt;1&lt;/state&gt;"
-  }
-
-  }
-  catch(e){
-    System.out.println("PUSH PROFILE: Exception "+e)
-    e.printStackTrace()
-    print "&lt;state&gt;-1&lt;/state&gt;"
-    print "&lt;error&gt;${e.message}&lt;/error&gt;"
-  }
-  print "&lt;/base&gt;"
+}
+catch(e){
+  System.out.println("PUSH PROFILE: Exception "+e)
+}
 {{/groovy}}</content>
 </xwikidoc>

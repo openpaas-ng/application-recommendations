@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432193470000</creationDate>
-  <date>1432624034000</date>
-  <contentUpdateDate>1432624034000</contentUpdateDate>
+  <date>1432818253000</date>
+  <contentUpdateDate>1432818253000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -50,11 +50,10 @@ import org.xwiki.model.reference.*
 import org.xwiki.model.*
 import com.xpn.xwiki.web.*
 import com.xpn.xwiki.*
+import com.xpn.xwiki.XWikiContext;
 
 class RecommendationsProfilesEventListener implements EventListener
 {
-  def pushReference = new EntityReference("Pushscript", EntityType.DOCUMENT, 
-    new EntityReference("RecommendationsCode", EntityType.SPACE))
 
   String getName()
   {
@@ -75,12 +74,14 @@ class RecommendationsProfilesEventListener implements EventListener
       def xwiki = context.getWiki()
       def configReference = new EntityReference("RecEngineConfig", EntityType.DOCUMENT, 
         new EntityReference("RecommendationsCode", EntityType.SPACE))
+      def pushReference = new EntityReference("PushscriptForListener", EntityType.DOCUMENT, 
+        new EntityReference("RecommendationsCode", EntityType.SPACE))
       // Prevent sending profiles for blacklisted spaces
       def blacklistedSpaces = xwiki.getDocument(configReference , context).getObject('RecommendationsCode.RecEngineConfigClass').get('blacklistedSpaces').value
       if (!blacklistedSpaces.contains(source.space)) {
         def pushDoc = xwiki.getDocument(pushReference, context)
-        def pushURL = pushDoc.getExternalURL('view', 'doc='+source.fullName, context)
-        def sendProfile = xwiki.getURLContent(pushURL, context)
+        def pushObj = xwiki.parseGroovyFromPage(pushDoc.fullName, context) 
+        pushObj.send(source.fullName, xwiki, context)
       }
     } catch (Exception e) {
       System.out.println("PROFILE LISTENER: Exception "+e)

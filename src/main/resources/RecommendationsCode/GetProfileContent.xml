@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432538333000</creationDate>
-  <date>1432734836000</date>
-  <contentUpdateDate>1432734071000</contentUpdateDate>
+  <date>1432819330000</date>
+  <contentUpdateDate>1432819308000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -53,6 +53,53 @@ class ContentForProfile {
     def sourceDoc = xwiki.getDocument(source)
     def stopWordsList = object.getStopWords(sourceDoc.getRealLanguage())
     def content = sourceDoc.getRenderedContent().replaceAll("&lt;br.*?&gt;"," ").replaceAll("&lt;.*?&gt;","")
+
+    // Remove accents
+    String nfdNormalizedString = Normalizer.normalize(content, Normalizer.Form.NFD); 
+    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+    content = pattern.matcher(nfdNormalizedString).replaceAll("");
+    // Remove punctuation
+    content = content.replaceAll("&amp;nbsp", " ").trim();
+    content = content.replaceAll("('|‘|’|\\s|\\p{Punct}|«|»)", " ").toLowerCase();
+    content = content.replaceAll(" +", " ").trim();
+    content = content.replaceAll(" [0-9]+ ", " ").trim();
+    // Count differents words
+    def contentSplit = content.split(" ");
+    def map = new HashMap&lt;&gt;();
+    for (words in contentSplit ) {
+      Integer n = map.get(words);
+      n = (n == null) ? 1 : ++n;
+      map.put(words, n);
+    }
+    // Remove stopwords
+    for (stopword in stopWordsList) {
+      map.remove(stopword);
+    }
+    // Select the 5 most used words
+    def i = 1
+    def mostFrequent = ""
+    def wordsList = []
+    for (i = 1; i&lt;=5; i++) {
+      mostFrequent = map.keySet()[1]
+      for (word in map.keySet()) {
+        if(map.get(word) &gt; map.get(mostFrequent)) {
+          mostFrequent = word
+        }
+      }
+      if(mostFrequent) {
+        wordsList.add(mostFrequent)
+      }
+      map.remove(mostFrequent)
+    }
+    return wordsList
+  }
+
+  def getContentFromDoc(source, xwiki, context) {
+
+    def object = xwiki.parseGroovyFromPage("RecommendationsCode.StopWords", context)
+    def sourceDoc = xwiki.getDocument(source, context)
+    def stopWordsList = object.getStopWords(sourceDoc.getRealLanguage())
+    def content = sourceDoc.getRenderedContent(context).replaceAll("&lt;br.*?&gt;"," ").replaceAll("&lt;.*?&gt;","")
 
     // Remove accents
     String nfdNormalizedString = Normalizer.normalize(content, Normalizer.Form.NFD); 

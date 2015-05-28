@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432623042000</creationDate>
-  <date>1432722043000</date>
-  <contentUpdateDate>1432722007000</contentUpdateDate>
+  <date>1432818447000</date>
+  <contentUpdateDate>1432818445000</contentUpdateDate>
   <version>1.1</version>
   <title>DeletedPagesListener</title>
   <defaultTemplate/>
@@ -51,7 +51,7 @@ import org.xwiki.model.*
 import com.xpn.xwiki.web.*
 import com.xpn.xwiki.*
 
-class RecommendationsProfilesEventListener implements EventListener
+class RecommendationsDeletedPagesEventListener implements EventListener
 {
   String getName()
   {
@@ -75,11 +75,11 @@ class RecommendationsProfilesEventListener implements EventListener
       // Prevent sending profiles for blacklisted spaces
       def configObject = xwiki.getDocument(configReference , context).getObject('RecommendationsCode.RecEngineConfigClass')
       def easyrecAddress = ""
-      if(recConfigDoc.get('easyrecInternalAddress')) {
-        easyrecAddress = recConfigDoc.get('easyrecInternalAddress')
+      if(configObject.get('easyrecInternalAddress').value) {
+        easyrecAddress = configObject.get('easyrecInternalAddress').value
       }
       else {
-        easyrecAddress = recConfigDoc.get('easyrecServerAddress')
+        easyrecAddress = configObject.get('easyrecServerAddress').value
       }
       def easyrecApiKey = configObject.get('easyrecApiKey').value
       def easyrecTenantId = configObject.get('easyrecTenantId').value
@@ -94,7 +94,7 @@ class RecommendationsProfilesEventListener implements EventListener
 // Register against the Observation Manager
 def observation = Utils.getComponent(ObservationManager.class)
 observation.removeListener("inactives")
-def listener = new RecommendationsProfilesEventListener()
+def listener = new RecommendationsDeletedPagesEventListener()
 observation.addListener(listener)
 {{/groovy}}</content>
 </xwikidoc>
