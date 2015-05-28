@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431950115000</creationDate>
-  <date>1432646863000</date>
-  <contentUpdateDate>1432646863000</contentUpdateDate>
+  <date>1432794236000</date>
+  <contentUpdateDate>1432794236000</contentUpdateDate>
   <version>1.1</version>
   <title>Pushscript</title>
   <defaultTemplate/>
@@ -73,11 +73,15 @@
     def tags = pushedDoc.getTags().toString().replaceAll("\\|", " ")
     def contentList = pageContentObj.getContentFromDoc(pushedDoc.fullName, xwiki).toString().replaceAll("(\\[|\\]|,)", "")
     def author = pushedDoc.getAuthor()
-    def space = pushedDoc.space
+    def space = pushedDoc.getSpace()
+    def docDescription = URLEncoder.encode(pushedDoc.getName(), "UTF-8")
+    def docFullName = URLEncoder.encode(pushedDoc.getFullName(), "UTF-8")
+    def docName = URLEncoder.encode(pushedDoc.getName(), "UTF-8")
+    def docSpace = URLEncoder.encode(pushedDoc.getSpace(), "UTF-8")
 
-    def profile = URLEncoder.encode("&lt;profile&gt;&lt;title&gt;${title}&lt;/title&gt;&lt;tags&gt;${tags}&lt;/tags&gt;&lt;author&gt;${author}&lt;/author&gt;&lt;space&gt;${space}&lt;/space&gt;&lt;content&gt;${contentList}&lt;/content&gt;&lt;/profile&gt;", "UTF-8")
-    def queryURLItem = "${easyrecAddress}api/1.0/sendaction?actiontype=TEST&amp;apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemdescription=${title}&amp;itemid=${pushedDoc}&amp;itemurl=/xwiki/bin/view/${pushedDoc.space}/${pushedDoc.name}&amp;sessionid=fakesessionidtocreateitems"
-    def queryURL = "${easyrecAddress}api/1.0/profile/store?apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemid=${pushedDoc}&amp;profile=${profile}"
+    def profile = URLEncoder.encode("&lt;profile&gt;&lt;tags&gt;${tags}&lt;/tags&gt;&lt;author&gt;${author}&lt;/author&gt;&lt;space&gt;${docSpace}&lt;/space&gt;&lt;content&gt;${contentList}&lt;/content&gt;&lt;/profile&gt;", "UTF-8")
+    def queryURLItem = "${easyrecAddress}api/1.0/sendaction?actiontype=CREATE&amp;apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemdescription=${docDescription}&amp;itemid=${docFullName}&amp;itemurl=/xwiki/bin/view/${docSpace}/${docName}&amp;sessionid=fakesessionidtocreateitems"
+    def queryURL = "${easyrecAddress}api/1.0/profile/store?apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemid=${docFullName}&amp;profile=${profile}"
     def createItem = xwiki.getURLContent(queryURLItem)
     def sendProfile = xwiki.getURLContent(queryURL)
   }
