@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431011588000</creationDate>
-  <date>1431955389000</date>
+  <date>1433232353000</date>
   <contentUpdateDate>1431507819000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -131,10 +131,7 @@
 (% id="recommendationsList" %)
 
 #panelfooter()
-{{/velocity}}
-
-
-</content>
+{{/velocity}}</content>
     </property>
     <property>
       <description>List pages recommended by the recommendation engine to the current user</description>
