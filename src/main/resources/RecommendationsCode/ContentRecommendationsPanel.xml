@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432207173000</creationDate>
-  <date>1432548381000</date>
+  <date>1433324575000</date>
   <contentUpdateDate>1432207173000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -127,7 +127,9 @@
       <content>{{velocity}}
 #panelheader("Pages with similar content")
 #set($discard = $xwiki.jsx.use("RecommendationsCode.ContentRecommendationsPanel"))
-(% id="recommendationsList4" %)
+
+(% id="recommendationsList3" %)
+
 #panelfooter()
 {{/velocity}}</content>
     </property>
@@ -218,22 +220,66 @@
     <className>XWiki.JavaScriptExtension</className>
     <guid>039faaa6-3ae1-4616-9288-cff0b937a65d</guid>
     <property>
-      <cache>long</cache>
+      <cache>forbid</cache>
     </property>
     <property>
       <code>require(['jquery'], function ($) {
   $(function(){
 
-    $.ajax({
-      dataType: 'html',
-      url: '/xwiki/bin/get/Recommendations/WebHome?type=4&amp;doc='+XWiki.currentSpace+'.'+XWiki.currentPage+'',
-      success : function(data) {
-        $('#recommendationsList4').html(data);
-      },
-      error : function(error) {
-        $('#recommendationsList4').html('Connection to recommendation engine failed.');
-      }
-    });
+    var userId = '$xcontext.getUser()';
+    var easyrecAddress = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecServerAddress')';
+    var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
+    var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
+    var sessionId = '$request.getHttpServletRequest().getSession().getId()';
+    var idList = [];
+    var splitId = [];
+    var space = '';
+    var docName = '';
+    var index = 0;
+    var docFullName = '';
+    if(!easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty()) {
+      $.ajax({
+        dataType: 'jsonp',
+        url: easyrecAddress+'api/1.0/json/relateditems?assoctype=PROFILE_SIMILARITY&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage,
+        timeout: 2000,
+        success : function(data, status) {
+          if(data.recommendeditems) {
+            if($.isArray(data.recommendeditems.item)) {
+              data.recommendeditems.item.each(function(value) {
+                idList.push(value.id);
+              });
+            }
+            else {
+              idList.push(data.recommendeditems.item.id);
+            }
+          }
+        },
+        complete : function(XHR, status) {
+          if(status == "success") {
+            var listSize = idList.length;
+            if(listSize == 0) {
+              $('#recommendationsList3').html('&lt;em&gt;No result&lt;/em&gt;');
+            }
+            else {
+              for (var i=0; i&lt;Math.min(listSize ,5); i++) {
+                index = Math.floor(Math.random()*idList.length);
+                docFullName = idList.splice(index, 1);
+                splitId = docFullName.toString().split('.')
+                space = splitId.shift();
+                docName = splitId.join('.');
+                $('#recommendationsList3').html($('#recommendationsList3').html()+'&lt;a href="/xwiki/bin/view/'+space+'/'+docName+'"&gt;'+docName+'&lt;/a&gt;&lt;br/&gt;');
+              }
+            }
+          }
+          else {
+            $('#recommendationsList3').html('&lt;em&gt;Unable to reach easyrec server : '+status+'&lt;/em&gt;');
+          }
+        }
+      });
+    }
+    else {
+      $('#recommendationsList').html('&lt;em&gt;You have to set up an easyrec server to use this extension&lt;/em&gt;');
+    }
 
   });
 });</code>
@@ -245,7 +291,7 @@
       <parse>1</parse>
     </property>
     <property>
-      <use>currentPage</use>
+      <use>onDemand</use>
     </property>
   </object>
   <content/>
