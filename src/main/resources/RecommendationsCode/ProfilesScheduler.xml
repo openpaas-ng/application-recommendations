@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432887009000</creationDate>
-  <date>1433235806000</date>
+  <date>1433327231000</date>
   <contentUpdateDate>1432900418000</contentUpdateDate>
   <version>1.1</version>
   <title>ProfilesScheduler</title>
@@ -41,7 +41,7 @@
   <comment/>
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.1</syntaxId>
-  <hidden>false</hidden>
+  <hidden>true</hidden>
   <class>
     <name>RecommendationsCode.ProfilesScheduler</name>
     <customClass/>
@@ -193,8 +193,8 @@ def blacklistedSpaces = xwiki.getDocument('RecommendationsCode.RecEngineConfig')
 def blacklist = blacklistedSpaces.replace(" ", "', '")
 def yesterday = new Date() - 1
 def updateDate = yesterday.format("yyyy-MM-dd HH:mm:ss")
-def hqlQuery = "where doc.space not in ('${blacklist}') and doc.date &gt;= '${updateDate}'"
-def docList = xwiki.searchDocuments(hqlQuery)
+def hqlQuery = "where doc.hidden=false and doc.space not in ('${blacklist}') and doc.date &gt;= '${updateDate}'"
+def docList = services.query.hql(hqlQuery).execute()
 for (def document in docList) {
   try {
     if(!recommendationCurrentlyIndexing) {

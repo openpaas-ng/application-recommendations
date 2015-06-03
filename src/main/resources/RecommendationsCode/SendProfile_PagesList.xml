@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431696118000</creationDate>
-  <date>1433230644000</date>
-  <contentUpdateDate>1433230644000</contentUpdateDate>
+  <date>1433326536000</date>
+  <contentUpdateDate>1433326536000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -57,7 +57,7 @@
 #if($request.get("updateDate"))
   #set($updateDate = "and doc.date &gt;= '${request.get('updateDate')}'")
 #end
-#set($hql = "select doc.fullName from XWikiDocument doc where doc.space not in ($blacklist) $!updateDate group by doc.fullName order by min(doc.creationDate), doc.fullName")
+#set($hql = "select doc.fullName from XWikiDocument doc where doc.hidden=false and doc.space not in ($blacklist) $!updateDate group by doc.fullName order by min(doc.creationDate), doc.fullName")
 #foreach($document in $services.query.hql($hql).setLimit($pages).setOffset($index).execute())
   $document
 #end
