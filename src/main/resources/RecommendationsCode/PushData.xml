@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1430923585000</creationDate>
-  <date>1433326938000</date>
+  <date>1433331117000</date>
   <contentUpdateDate>1431507819000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -119,29 +119,34 @@
     <className>XWiki.JavaScriptExtension</className>
     <guid>0e65ecd8-b507-4988-9e14-1aaeeec6cf49</guid>
     <property>
-      <cache>default</cache>
+      <cache>forbid</cache>
     </property>
     <property>
       <code>require(['jquery'], function ($) {
   $(function(){
 
-    var userId = '';
-    if('$xcontext.getUser()' !== 'XWiki.XWikiGuest') {
-      var userId = '&amp;userid=$xcontext.getUser()';
-    }
-    var easyrecAddress = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecServerAddress')';
-    var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
-    var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
-    var sessionId = '$request.getHttpServletRequest().getSession().getId()';
-    var hidden = '$doc.isHidden()';
+    #if($request.get('fullname'))
+      #set($document = $xwiki.getDocument($request.get('fullname')))
+      var userId = '';
+      if('$xcontext.getUser()' !== 'XWiki.XWikiGuest') {
+        var userId = '&amp;userid=$xcontext.getUser()';
+      }
+      var easyrecAddress = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecServerAddress')';
+      var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
+      var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
+      var sessionId = '$request.getHttpServletRequest().getSession().getId()';
+      var docFullName = '$document.fullName';
+      var hidden = $document.isHidden();
+      if((XWiki.contextaction == 'view' || XWiki.contextaction == 'edit') &amp;&amp; !XWiki.docisnew &amp;&amp; !easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty() &amp;&amp; !hidden) {
+        $.ajax({
+          dataType: 'jsonp',
+          url: ''+easyrecAddress+'api/1.0/json/sendaction?actiontype='+XWiki.contextaction.toUpperCase()+'&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage+'&amp;itemdescription='+XWiki.currentPage+'&amp;itemurl=/xwiki/bin/view/'+XWiki.currentSpace+'/'+XWiki.currentPage+'&amp;sessionid='+sessionId+''+userId+'',
+      });
+      }
+    #else
+      $.getScript('/xwiki/bin/jsx/RecommendationsCode/PushData?language=en&amp;fullname='+XWiki.currentSpace+'.'+XWiki.currentPage);
+    #end
 
-    if((XWiki.contextaction == 'view' || XWiki.contextaction == 'edit') &amp;&amp; !XWiki.docisnew &amp;&amp; !easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty() &amp;&amp; !hidden) {
-    $.ajax({
-      dataType: 'jsonp',
-      url: ''+easyrecAddress+'api/1.0/json/sendaction?actiontype='+XWiki.contextaction.toUpperCase()+'&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage+'&amp;itemdescription='+XWiki.currentPage+'&amp;itemurl=/xwiki/bin/view/'+XWiki.currentSpace+'/'+XWiki.currentPage+'&amp;sessionid='+sessionId+''+userId+'',
-    });
-    }
-    
   });
 });</code>
     </property>
