@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432207173000</creationDate>
-  <date>1433324575000</date>
+  <date>1433334853000</date>
   <contentUpdateDate>1432207173000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -267,7 +267,7 @@
                 splitId = docFullName.toString().split('.')
                 space = splitId.shift();
                 docName = splitId.join('.');
-                $('#recommendationsList3').html($('#recommendationsList3').html()+'&lt;a href="/xwiki/bin/view/'+space+'/'+docName+'"&gt;'+docName+'&lt;/a&gt;&lt;br/&gt;');
+                $('#recommendationsList3').html($('#recommendationsList3').html()+'&lt;a href="/xwiki/bin/view/'+space+'/'+docName+'"&gt;'+docFullName+'&lt;/a&gt;&lt;br/&gt;');
               }
             }
           }
