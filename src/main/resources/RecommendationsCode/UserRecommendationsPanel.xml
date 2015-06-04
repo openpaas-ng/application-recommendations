@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431011588000</creationDate>
-  <date>1433334870000</date>
+  <date>1433402968000</date>
   <contentUpdateDate>1431507819000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -225,22 +225,16 @@
     <property>
       <code>require(['jquery'], function ($) {
   $(function(){
-    function displayRec(pageList) {
 
-    }
-
+    // easyrec configuration
     var userId = '$xcontext.getUser()';
     var easyrecAddress = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecServerAddress')';
     var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
     var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
-    var sessionId = '$request.getHttpServletRequest().getSession().getId()';
     var idList = [];
     var splitId = [];
-    var space = '';
-    var docName = '';
-    var index = 0;
-    var docFullName = '';
-    if(!easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty()) {
+
+    if(!easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty()) { 
       // "view" actions
       $.ajax({
         dataType: 'jsonp',
@@ -248,9 +242,9 @@
         timeout: 2000,
         success : function(data, status) {
           if(data.recommendeditems) {
-            if($.isArray(data.recommendeditems.item)) {
+            if($.isArray(data.recommendeditems.item)) { // .each() won't work if it isn't an array (one element only)
               data.recommendeditems.item.each(function(value) {
-                idList.push(value.id);
+                idList.push(value.id); // Push "view" recommendations to the list
               });
             }
             else {
@@ -265,11 +259,11 @@
             url: easyrecAddress+'api/1.0/json/recommendationsforuser?numberOfResults=1&amp;actiontype=EDIT&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+userId,
             timeout: 2000,
             success : function(data) {
-              if(data.recommendeditems) {
+              if(data.recommendeditems) { // .each() won't work if it isn't an array (one element only)
                 if($.isArray(data.recommendeditems.item)) {
                   data.recommendeditems.item.each(function(value) {
                     if(!($.inArray(idList, value.id))) {
-                      idList.push(value.id);
+                      idList.push(value.id);  // Push "edit" recommendations to the list
                     }
                   });
                 }
@@ -278,24 +272,31 @@
                 }
               }
             },
-            complete : function (XHR, status) {
+            complete : function (XHR, status) { // Display the results
               if(textStatus == "success" || status == "success") {
                 var listSize = idList.length;
                 if(listSize == 0) {
                   $('#recommendationsList').html('&lt;em&gt;No result&lt;/em&gt;');
                 }
                 else {
+                  var index = 0;
+                  var randomPagesList = [];
                   for (var i=0; i&lt;Math.min(listSize ,5); i++) {
                     index = Math.floor(Math.random()*idList.length);
-                    docFullName = idList.splice(index, 1);
-                    splitId = docFullName.toString().split('.')
-                    space = splitId.shift();
-                    docName = splitId.join('.');
-                    $('#recommendationsList').html($('#recommendationsList').html()+'&lt;a href="/xwiki/bin/view/'+space+'/'+docName+'"&gt;'+docFullName+'&lt;/a&gt;&lt;br/&gt;');
+                    randomPagesList.push(idList.splice(index, 1));
                   }
+                  $.ajax({
+                    dataType : 'html',
+                    url : '/xwiki/bin/get/RecommendationsCode/DisplayPrettyLinks',
+                    method : 'POST',
+                    data : 'pagesList='+randomPagesList,
+                    success : function(data, status) {
+                      $('#recommendationsList').html(data);
+                    }
+                  });
                 }
               }
-              if(textStatus != "success" &amp;&amp; status != "success") {
+              else if(textStatus != "success" &amp;&amp; status != "success") {
                 $('#recommendationsList').html('&lt;em&gt;Unable to reach easyrec server : '+textStatus+'&lt;/em&gt;');
               }
             }

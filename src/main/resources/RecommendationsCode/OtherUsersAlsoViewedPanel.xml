@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431503058000</creationDate>
-  <date>1433334863000</date>
+  <date>1433402967000</date>
   <contentUpdateDate>1431507819000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -226,17 +226,14 @@
       <code>require(['jquery'], function ($) {
   $(function(){
 
+    // easyrec configuration
     var userId = '$xcontext.getUser()';
     var easyrecAddress = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecServerAddress')';
     var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
     var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
-    var sessionId = '$request.getHttpServletRequest().getSession().getId()';
     var idList = [];
     var splitId = [];
-    var space = '';
-    var docName = '';
-    var index = 0;
-    var docFullName = '';
+
     if(!easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty()) {
       $.ajax({
         dataType: 'jsonp',
@@ -244,9 +241,9 @@
         timeout: 2000,
         success : function(data, status) {
           if(data.recommendeditems) {
-            if($.isArray(data.recommendeditems.item)) {
+            if($.isArray(data.recommendeditems.item)) { // .each() won't work if it isn't an array (one element only)
               data.recommendeditems.item.each(function(value) {
-                idList.push(value.id);
+                idList.push(value.id); //push recommendations to the list
               });
             }
             else {
@@ -254,21 +251,22 @@
             }
           }
         },
-        complete : function(XHR, status) {
+        complete : function(XHR, status) { // Display the results
           if(status == "success") {
             var listSize = idList.length;
             if(listSize == 0) {
               $('#recommendationsList2').html('&lt;em&gt;No result&lt;/em&gt;');
             }
             else {
-              for (var i=0; i&lt;Math.min(listSize ,5); i++) {
-                index = Math.floor(Math.random()*idList.length);
-                docFullName = idList.splice(index, 1);
-                splitId = docFullName.toString().split('.')
-                space = splitId.shift();
-                docName = splitId.join('.');
-                $('#recommendationsList2').html($('#recommendationsList2').html()+'&lt;a href="/xwiki/bin/view/'+space+'/'+docName+'"&gt;'+docFullName+'&lt;/a&gt;&lt;br/&gt;');
-              }
+              $.ajax({
+                dataType : 'html',
+                url : '/xwiki/bin/get/RecommendationsCode/DisplayPrettyLinks',
+                method : 'POST',
+                data : 'pagesList='+idList.slice(0, 5),
+                success : function(data, status) {
+                  $('#recommendationsList2').html(data);
+                }
+              });
             }
           }
           else {
