@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1433399155000</creationDate>
-  <date>1433401380000</date>
-  <contentUpdateDate>1433401380000</contentUpdateDate>
+  <date>1433414833000</date>
+  <contentUpdateDate>1433414833000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -44,8 +44,13 @@
   <hidden>true</hidden>
   <content>{{velocity}}
 #if($request.get('pagesList'))
+  #set($i = 0)
   #foreach($page in $request.get('pagesList').split(','))
-    [[$xwiki.getDocument($page).getDisplayTitle()&gt;&gt;$page]]
+    #if($i&lt;5)
+      #if($xwiki.hasAccessLevel("view", $xcontext.getUser(), $page) &amp;&amp; $xwiki.exists($page))
+        [[$xwiki.getDocument($page).getDisplayTitle()&gt;&gt;$page]]
+      #end
+    #end
   #end
 #end
 {{/velocity}}</content>

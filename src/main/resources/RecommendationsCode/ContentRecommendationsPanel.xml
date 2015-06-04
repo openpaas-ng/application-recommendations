@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432207173000</creationDate>
-  <date>1433402966000</date>
+  <date>1433414665000</date>
   <contentUpdateDate>1432207173000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -233,6 +233,7 @@
     var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
     var idList = [];
     var splitId = [];
+
     if(!easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty()) {
       $.ajax({
         dataType: 'jsonp',
@@ -261,7 +262,7 @@
                 dataType : 'html',
                 url : '/xwiki/bin/get/RecommendationsCode/DisplayPrettyLinks',
                 method : 'POST',
-                data : 'pagesList='+idList.slice(0, 5),
+                data : 'pagesList='+idList,
                 success : function(data, status) {
                   $('#recommendationsList3').html(data);
                 }
@@ -275,7 +276,7 @@
       });
     }
     else {
-      $('#recommendationsList').html('&lt;em&gt;You have to set up an easyrec server to use this extension&lt;/em&gt;');
+      $('#recommendationsList3').html('&lt;em&gt;You have to set up an easyrec server to use this extension&lt;/em&gt;');
     }
 
   });
