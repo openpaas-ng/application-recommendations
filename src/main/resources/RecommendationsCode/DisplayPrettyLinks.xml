@@ -49,6 +49,7 @@
     #if($i&lt;5)
       #if($xwiki.hasAccessLevel("view", $xcontext.getUser(), $page) &amp;&amp; $xwiki.exists($page))
         [[$xwiki.getDocument($page).getDisplayTitle()&gt;&gt;$page]]
+        #set($i = $i+1)
       #end
     #end
   #end
