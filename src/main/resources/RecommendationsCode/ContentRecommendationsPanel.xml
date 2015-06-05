@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432207173000</creationDate>
-  <date>1433414665000</date>
+  <date>1433491841000</date>
   <contentUpdateDate>1432207173000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -233,6 +233,7 @@
     var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
     var idList = [];
     var splitId = [];
+    var panelDiv = $('#recommendationsList3');
 
     if(!easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty()) {
       $.ajax({
@@ -255,7 +256,7 @@
           if(status == "success") {
             var listSize = idList.length;
             if(listSize == 0) {
-              $('#recommendationsList3').html('&lt;em&gt;No result&lt;/em&gt;');
+              panelDiv.html('&lt;em&gt;No result&lt;/em&gt;');
             }
             else {
               $.ajax({
@@ -264,19 +265,19 @@
                 method : 'POST',
                 data : 'pagesList='+idList,
                 success : function(data, status) {
-                  $('#recommendationsList3').html(data);
+                  panelDiv.html(data);
                 }
               });
             }
           }
           else {
-            $('#recommendationsList3').html('&lt;em&gt;Unable to reach easyrec server : '+status+'&lt;/em&gt;');
+            panelDiv.html('&lt;em&gt;Unable to reach easyrec server : '+status+'&lt;/em&gt;');
           }
         }
       });
     }
     else {
-      $('#recommendationsList3').html('&lt;em&gt;You have to set up an easyrec server to use this extension&lt;/em&gt;');
+      panelDiv.html('&lt;em&gt;You have to set up an easyrec server to use this extension&lt;/em&gt;');
     }
 
   });
