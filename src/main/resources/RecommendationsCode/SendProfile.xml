@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431942330000</creationDate>
-  <date>1433229907000</date>
-  <contentUpdateDate>1433229907000</contentUpdateDate>
+  <date>1433773246000</date>
+  <contentUpdateDate>1433773182000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -127,7 +127,7 @@ $(function(){
   var stop = true;
 
   function loadProfileFor(pages){
-    var page = pages[0];
+    var page = $('&lt;div/&gt;').html(pages[0]).text();
     var url = "/xwiki/bin/view/RecommendationsCode/Pushscript?doc=" + page;
     $.ajax(url).success(function(res){
       $('#bloctext').html($('#bloctext').html()+''+page+'&lt;br/&gt;');
@@ -194,7 +194,7 @@ $(function(){
       <parse>1</parse>
     </property>
     <property>
-      <use>always</use>
+      <use>currentPage</use>
     </property>
   </object>
   <object>
@@ -266,7 +266,7 @@ $(function(){
     <name>RecommendationsCode.SendProfile</name>
     <number>0</number>
     <className>XWiki.XWikiRights</className>
-    <guid>fedd17ac-4f8c-4655-b5ce-ebfd849dd3a5</guid>
+    <guid>87bad7d3-04a0-4b30-a81b-af86d412aca6</guid>
     <property>
       <allow>1</allow>
     </property>
@@ -274,7 +274,7 @@ $(function(){
       <groups>XWiki.XWikiAdminGroup,</groups>
     </property>
     <property>
-      <levels>view,edit,delete,comment</levels>
+      <levels>view</levels>
     </property>
     <property>
       <users/>

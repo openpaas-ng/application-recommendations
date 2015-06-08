@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432207173000</creationDate>
-  <date>1433491841000</date>
+  <date>1433770911000</date>
   <contentUpdateDate>1432207173000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -263,7 +263,7 @@
                 dataType : 'html',
                 url : '/xwiki/bin/get/RecommendationsCode/DisplayPrettyLinks',
                 method : 'POST',
-                data : 'pagesList='+idList,
+                data : 'pagesList='+encodeURIComponent(idList),
                 success : function(data, status) {
                   panelDiv.html(data);
                 }

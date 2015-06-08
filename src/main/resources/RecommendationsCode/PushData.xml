@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1430923585000</creationDate>
-  <date>1433331117000</date>
-  <contentUpdateDate>1431507819000</contentUpdateDate>
+  <date>1433772934000</date>
+  <contentUpdateDate>1433763485000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -135,16 +135,18 @@
       var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
       var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
       var sessionId = '$request.getHttpServletRequest().getSession().getId()';
-      var docFullName = '$document.fullName';
+      var docFullName = '$document.fullName.replace("\", "%5C").replace("'", "\'")';
+      var docName = '$document.name.replace("\", "%5C").replace("'", "\'")';
+      var spaceName  = '$document.space.replace("\", "%5C").replace("'", "\'")';
       var hidden = $document.isHidden();
       if((XWiki.contextaction == 'view' || XWiki.contextaction == 'edit') &amp;&amp; !XWiki.docisnew &amp;&amp; !easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty() &amp;&amp; !hidden) {
         $.ajax({
           dataType: 'jsonp',
-          url: ''+easyrecAddress+'api/1.0/json/sendaction?actiontype='+XWiki.contextaction.toUpperCase()+'&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage+'&amp;itemdescription='+XWiki.currentPage+'&amp;itemurl=/xwiki/bin/view/'+XWiki.currentSpace+'/'+XWiki.currentPage+'&amp;sessionid='+sessionId+''+userId+'',
+          url: ''+easyrecAddress+'api/1.0/json/sendaction?actiontype='+XWiki.contextaction.toUpperCase()+'&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+docFullName+'&amp;itemdescription='+docName+'&amp;itemurl=/xwiki/bin/view/'+spaceName+'/'+docName+'&amp;sessionid='+sessionId+''+userId+'',
       });
       }
     #else
-      $.getScript('/xwiki/bin/jsx/RecommendationsCode/PushData?language=en&amp;fullname='+XWiki.currentSpace+'.'+XWiki.currentPage);
+      $.getScript('/xwiki/bin/jsx/RecommendationsCode/PushData?language=en&amp;fullname='+encodeURIComponent(XWiki.currentSpace)+'.'+encodeURIComponent((XWiki.currentPage).replace("\\", "\\\\")));
     #end
 
   });
