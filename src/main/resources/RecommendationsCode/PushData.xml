@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1430923585000</creationDate>
-  <date>1433772934000</date>
-  <contentUpdateDate>1433763485000</contentUpdateDate>
+  <date>1436429037000</date>
+  <contentUpdateDate>1436358711000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -124,31 +124,34 @@
     <property>
       <code>require(['jquery'], function ($) {
   $(function(){
+    var userId = '';
+    var easyrecAddress = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecServerAddress')';
+    var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
+    var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
+    var sessionId = '$request.getHttpServletRequest().getSession().getId()';
+    var resultDataElement = $('.recommendations-data').html();
+    var resultData = JSON.parse(decodeURIComponent(resultDataElement).replace(/\+/g, ' '));
+    if(resultData.userId !== 'XWiki.XWikiGuest') {
+      var userId = '&amp;userid='+resultData.userId;
+    }
+    var docFullName = resultData.fullName;
+    var docName = resultData.name;
+    var spaceName  = resultData.space;
+    var hidden = resultData.hidden;
+    var deleteForm = resultData.deleteForm;
 
-    #if($request.get('fullname'))
-      #set($document = $xwiki.getDocument($request.get('fullname')))
-      var userId = '';
-      if('$xcontext.getUser()' !== 'XWiki.XWikiGuest') {
-        var userId = '&amp;userid=$xcontext.getUser()';
-      }
-      var easyrecAddress = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecServerAddress')';
-      var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
-      var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
-      var sessionId = '$request.getHttpServletRequest().getSession().getId()';
-      var docFullName = '$document.fullName.replace("\", "%5C").replace("'", "\'")';
-      var docName = '$document.name.replace("\", "%5C").replace("'", "\'")';
-      var spaceName  = '$document.space.replace("\", "%5C").replace("'", "\'")';
-      var hidden = $document.isHidden();
-      if((XWiki.contextaction == 'view' || XWiki.contextaction == 'edit') &amp;&amp; !XWiki.docisnew &amp;&amp; !easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty() &amp;&amp; !hidden) {
-        $.ajax({
-          dataType: 'jsonp',
-          url: ''+easyrecAddress+'api/1.0/json/sendaction?actiontype='+XWiki.contextaction.toUpperCase()+'&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+docFullName+'&amp;itemdescription='+docName+'&amp;itemurl=/xwiki/bin/view/'+spaceName+'/'+docName+'&amp;sessionid='+sessionId+''+userId+'',
+    if((XWiki.contextaction == 'view' || XWiki.contextaction == 'edit') &amp;&amp; !XWiki.docisnew &amp;&amp; !easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty() &amp;&amp; !hidden) {
+      $.ajax({
+        dataType: 'jsonp',
+        url: ''+easyrecAddress+'api/1.0/json/sendaction?actiontype='+XWiki.contextaction.toUpperCase()+'&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+docFullName+'&amp;itemdescription='+docName+'&amp;itemurl=/xwiki/bin/view/'+spaceName+'/'+docName+'&amp;sessionid='+sessionId+''+userId+'',
       });
-      }
-    #else
-      $.getScript('/xwiki/bin/jsx/RecommendationsCode/PushData?language=en&amp;fullname='+encodeURIComponent(XWiki.currentSpace)+'.'+encodeURIComponent((XWiki.currentPage).replace("\\", "\\\\")));
-    #end
-
+    }
+    else if(XWiki.contextaction == 'delete' &amp;&amp; deleteForm == "1" &amp;&amp; !easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty()) {
+      $.ajax({
+        dataType: 'jsonp',
+        url: ''+easyrecAddress+'api/1.0/setitemactive?active=false&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+docFullName,
+      });
+    }
   });
 });</code>
     </property>
@@ -159,7 +162,103 @@
       <parse>1</parse>
     </property>
     <property>
-      <use>always</use>
+      <use>onDemand</use>
+    </property>
+  </object>
+  <object>
+    <class>
+      <name>XWiki.UIExtensionClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <content>
+        <disabled>0</disabled>
+        <name>content</name>
+        <number>3</number>
+        <prettyName>Extension Content</prettyName>
+        <rows>10</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </content>
+      <extensionPointId>
+        <disabled>0</disabled>
+        <name>extensionPointId</name>
+        <number>1</number>
+        <prettyName>Extension Point ID</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </extensionPointId>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>2</number>
+        <prettyName>Extension ID</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <parameters>
+        <disabled>0</disabled>
+        <name>parameters</name>
+        <number>4</number>
+        <prettyName>Extension Parameters</prettyName>
+        <rows>10</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </parameters>
+      <scope>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>scope</name>
+        <number>5</number>
+        <prettyName>Extension Scope</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>wiki=Current Wiki|user=Current User|global=Global</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </scope>
+    </class>
+    <name>RecommendationsCode.PushData</name>
+    <number>0</number>
+    <className>XWiki.UIExtensionClass</className>
+    <guid>e9630d89-7115-4b40-9588-6ac50a1a20af</guid>
+    <property>
+      <content>{{velocity}}
+{{html clean="false"}}
+#set($dq = '"')
+#set($deleteForm = 0)
+#if($request.form_token &amp;&amp; $request.confirm)
+  #set($deleteForm = 1)
+#end
+#set($recommendationsData = "{${dq}fullName${dq} : ${dq}$escapetool.json($doc.fullName)${dq}, ${dq}name${dq} : ${dq}$escapetool.json($doc.name)${dq}, ${dq}space${dq}: ${dq}$escapetool.json($doc.space)${dq}, ${dq}hidden${dq} : $doc.isHidden(), ${dq}userId${dq} : ${dq}$escapetool.json($xcontext.getUser())${dq}, ${dq}deleteForm${dq} : $deleteForm}")
+&lt;div style="display:none" class="recommendations-data"&gt;$escapetool.url($recommendationsData)&lt;/div&gt;
+{{/html}}
+#set($discard = $xwiki.jsx.use("RecommendationsCode.PushData"))
+{{/velocity}}</content>
+    </property>
+    <property>
+      <extensionPointId>org.xwiki.platform.template.header.after</extensionPointId>
+    </property>
+    <property>
+      <name>recommendations.always_available_jsx</name>
+    </property>
+    <property>
+      <parameters/>
+    </property>
+    <property>
+      <scope>wiki</scope>
     </property>
   </object>
   <content/>
