@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1430922861000</creationDate>
-  <date>1432646391000</date>
-  <contentUpdateDate>1432646391000</contentUpdateDate>
+  <date>1436440787000</date>
+  <contentUpdateDate>1436440787000</contentUpdateDate>
   <version>1.1</version>
   <title>Recommendation Engine Config Class</title>
   <defaultTemplate/>
@@ -94,7 +94,7 @@
       <name>easyrecInternalAddress</name>
       <number>2</number>
       <picker>0</picker>
-      <prettyName>easyrec Address (for communication between servers)</prettyName>
+      <prettyName>easyrec HTTP Address (optionnal, for communication between servers)</prettyName>
       <size>30</size>
       <unmodifiable>0</unmodifiable>
       <validationMessage/>
@@ -107,7 +107,7 @@
       <name>easyrecServerAddress</name>
       <number>1</number>
       <picker>0</picker>
-      <prettyName>easyrec Server Address ( e.g. http://myeasyrecserver/easyrec-web/ )</prettyName>
+      <prettyName>easyrec Server Main Address ( e.g. https://myeasyrecserver/easyrec-web/ )</prettyName>
       <size>30</size>
       <unmodifiable>0</unmodifiable>
       <validationMessage/>

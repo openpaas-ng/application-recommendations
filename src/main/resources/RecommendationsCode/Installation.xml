@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
+<xwikidoc>
+  <web>RecommendationsCode</web>
+  <name>Installation</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>RecommendationsCode.WebHome</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1436341729000</creationDate>
+  <date>1436444553000</date>
+  <contentUpdateDate>1436444553000</contentUpdateDate>
+  <version>1.1</version>
+  <title>Installation</title>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>false</hidden>
+  <object>
+    <class>
+      <name>XWiki.JavaScriptExtension</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <cache>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>cache</name>
+        <number>5</number>
+        <prettyName>Caching policy</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>long|short|default|forbid</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </cache>
+      <code>
+        <disabled>0</disabled>
+        <name>code</name>
+        <number>2</number>
+        <prettyName>Code</prettyName>
+        <rows>20</rows>
+        <size>50</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </code>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <parse>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>parse</name>
+        <number>4</number>
+        <prettyName>Parse content</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </parse>
+      <use>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>use</name>
+        <number>3</number>
+        <prettyName>Use this extension</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>currentPage|onDemand|always</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </use>
+    </class>
+    <name>RecommendationsCode.Installation</name>
+    <number>0</number>
+    <className>XWiki.JavaScriptExtension</className>
+    <guid>5429ec63-ce2f-49b9-966c-812a708eb4d6</guid>
+    <property>
+      <cache>long</cache>
+    </property>
+    <property>
+      <code>require(['jquery'], function ($) {
+  $(function(){
+    $('#recJobSchedule').click(function() {
+      $.ajax($('#recJobScheduleURL').val()).success(function() {
+        window.location.href = window.docviewurl;
+      });
+    });
+    $('#recJobUnschedule').click(function() {
+      $.ajax($('#recJobUnscheduleURL').val()).success(function() {
+        window.location.href = window.docviewurl;
+      });
+    });
+  });
+});</code>
+    </property>
+    <property>
+      <name>Recommendations Extension Installation</name>
+    </property>
+    <property>
+      <parse/>
+    </property>
+    <property>
+      <use>currentPage</use>
+    </property>
+  </object>
+  <content>{{velocity}}
+#set($prefDoc = $xwiki.getDocument('XWiki.XWikiPreferences'))
+#set($prefObj = $prefDoc.getObject('XWiki.XWikiPreferences'))
+#set($panelList = $prefDoc.rightPanels.split([',']))
+#set($panelListLeft = $prefDoc.leftPanels.split([',']))
+#set($panelIsActive = $panelList.contains('RecommendationsCode.RecommendationsPanel'))
+#set($panelIsActiveLeft = $panelListLeft.contains('RecommendationsCode.RecommendationsPanel'))
+#set($newList = "")
+#if(($request.removePanel &amp;&amp; $panelIsActive) || ($request.removePanelLeft &amp;&amp; $panelIsActiveLeft))
+  #set($init = 1)
+  #set($propertyName = 'rightPanels')
+  #if($request.removePanelLeft)
+    #set($propertyName = 'leftPanels')
+    #set($panelList = $panelListLeft)
+  #end
+  #foreach($page in $panelList)
+    #if($page != 'RecommendationsCode.RecommendationsPanel')
+      #if($init == 1)
+        #set($init = 0)
+      #else
+        #set($newList = "$newList,")
+      #end
+      #set($newList = "$newList$page")
+    #end
+  #end
+  #set($discard = $prefObj.set($propertyName, $newList))
+  #set($discard = $prefDoc.save())
+#elseif(($request.addPanel || $request.addPanelLeft) &amp;&amp; !$panelIsActive &amp;&amp; !$panelIsActiveLeft)
+  #set($propertyName = 'rightPanels')
+  #if($request.addPanelLeft)
+    #set($propertyName = 'leftPanels')
+    #set($panelList = $panelListLeft)
+  #end
+  #set($init = 1)
+  #foreach($page in $panelList)
+    #if($init == 1)
+      #set($init = 0)
+    #else
+      #set($newList = "$newList,")
+    #end
+    #set($newList = "$newList$page")
+  #end
+  #set($newList = "$newList,RecommendationsCode.RecommendationsPanel")
+  #set($discard = $prefObj.set($propertyName, $newList))
+  #set($discard = $prefDoc.save())
+#end
+== Extension &amp; easyrec settings ==
+In order to use the extension, you need to have an easyrec server. easyrec is the open-source recommendation engine used by this extension. If you don't have an easyrec server yet, you can read the [[documentation&gt;&gt;http://extensions.xwiki.org/xwiki/bin/view/Extension/RecommendationsApplication#HInstalleasyrec]] to know how to install and configure easyrec.
+When the easyrec server is installed, you can create a tenant in easyrec, configure it as described in the documentation, and then configure XWiki to link it with your easyrec server.
+[[Go the the administration page to link easyrec and XWiki&gt;&gt;path:$xwiki.getURL('XWiki.XWikiPreferences', 'admin')||queryString="editor=globaladmin&amp;section=Recommendation+Engine" class="btn btn-primary"]]
+
+== Recommendations panel ==
+#set($prefDoc = $xwiki.getDocument('XWiki.XWikiPreferences'))
+#set($prefObj = $prefDoc.getObject('XWiki.XWikiPreferences'))
+#set($panelList = $prefDoc.rightPanels.split([',']))
+#set($panelIsActive = $panelList.contains('RecommendationsCode.RecommendationsPanel'))
+#set($panelListLeft = $prefDoc.leftPanels.split([',']))
+#set($panelIsActiveLeft = $panelListLeft.contains('RecommendationsCode.RecommendationsPanel'))
+#if($panelIsActive)
+  [[Remove the Recommendations panel (right side)&gt;&gt;Installation||queryString="removePanel=1" class="btn btn-primary"]]
+#elseif(!$panelIsActiveLeft)
+  [[Add the Recommendations panel (right side)&gt;&gt;Installation||queryString="addPanel=1" class="btn btn-success"]]
+#end
+#if($panelIsActiveLeft)
+  [[Remove the Recommendations panel (left side)&gt;&gt;Installation||queryString="removePanelLeft=1" class="btn btn-primary"]]
+#elseif(!$panelIsActive)
+  [[Add the Recommendations panel (left side)&gt;&gt;Installation||queryString="addPanelLeft=1" class="btn btn-success"]]
+#end
+//You can also change the position of the Panel more precisely in [[the Panel wizard&gt;&gt;Panels.PanelWizard]].//
+
+== Content-based recommendations ==
+#if($hasProgramming)
+You have programming rights. You can thus enable the content-based recommendations (which recommend pages with a content similar to the visited pages).
+To do so, you have to send "profiles" of your pages to the recommendations engine. This can be done in two steps : sending the profile of existing pages and activating a job which updates profile of new/edited pages.
+==== Existing pages ====
+To send the profile of your existing pages, you can use [[that page&gt;&gt;RecommendationsCode.SendProfile]].
+Profiles will be sent one at a time so you have to specify how many pages you want to treat when you will start the script. You will be able to continue the process for the remaining pages by using the "index" field.
+
+==== Profile update job ====
+#set($schedulerDoc = $xwiki.getDocument('RecommendationsCode.ProfilesScheduler'))
+#set($schedulerObj = $schedulerDoc.getObject('XWiki.SchedulerJobClass'))
+#set($jobStatus = $xwiki.scheduler.getStatus($schedulerObj))
+#if($jobStatus == 'None')
+  Job is **inactive**
+  {{html clean="false"}}&lt;input type="button" class="btn btn-success" id="recJobSchedule" value="Schedule the job for content-based recommendations"&gt;&lt;input type="hidden" id="recJobScheduleURL" value="$xwiki.getURL('Scheduler.WebHome', 'view', 'do=schedule&amp;which=RecommendationsCode.ProfilesScheduler')"&gt;{{/html}}
+#elseif($jobStatus == 'Normal')
+  Job is **active**
+  {{html clean="false"}}&lt;input type="button" class="btn btn-primary" id="recJobUnschedule" value="Unschedule the job for content-based recommendations"&gt;&lt;input type="hidden" id="recJobUnscheduleURL" value="$xwiki.getURL('Scheduler.WebHome', 'view', 'do=unschedule&amp;which=RecommendationsCode.ProfilesScheduler')"&gt;{{/html}}
+#else
+  Unable to determine the job state.
+#end
+You can also go to [[the Scheduler WebHome page&gt;&gt;Scheduler.WebHome]] to change the job settings or schedule it.
+
+{{warning}}
+If you want the profile creation/update to work, you have to check that the following pages are saved by someone who has the programming rights :
+* [[RecommendationsCode.GetProfileContent]]
+* [[RecommendationsCode.Pushscript]]
+* [[RecommendationsCode.PushscriptForScheduler]]
+* [[RecommendationsCode.ProfilesScheduler]]
+* [[RecommendationsCode.StopWords]]
+{{/warning}}
+
+== Add stop words for the content-based recommendations ==
+
+To receive more relevant recommendations, you can choose the list of words which will be ignored while searching the 5 most used words of the page. It prevents the recommendation engine from linking 2 pages because they have a lot of "the" in their content.
+To do so, you just have to add these words in the [[Stop Words list&gt;&gt;RecommendationsCode.StopWords]]. You can also add stop words for a new language with a new "else if" statement.
+#else
+  You need programming rights to be able to use or configure the content-based recommendations.
+#end
+{{/velocity}}</content>
+</xwikidoc>
