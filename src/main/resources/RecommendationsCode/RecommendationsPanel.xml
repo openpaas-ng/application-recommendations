@@ -22,7 +22,7 @@
 
 <xwikidoc>
   <web>RecommendationsCode</web>
-  <name>OtherUsersAlsoViewedPanel</name>
+  <name>RecommendationsPanel</name>
   <language/>
   <defaultLanguage/>
   <translation>0</translation>
@@ -31,9 +31,9 @@
   <author>xwiki:XWiki.Admin</author>
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
-  <creationDate>1431503058000</creationDate>
-  <date>1433770936000</date>
-  <contentUpdateDate>1431507819000</contentUpdateDate>
+  <creationDate>1436262914000</creationDate>
+  <date>1436364786000</date>
+  <contentUpdateDate>1436262914000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -116,19 +116,19 @@
         <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
       </type>
     </class>
-    <name>RecommendationsCode.OtherUsersAlsoViewedPanel</name>
+    <name>RecommendationsCode.RecommendationsPanel</name>
     <number>0</number>
     <className>Panels.PanelClass</className>
-    <guid>cde6198f-99da-4765-bb6e-1b4d64c2aa34</guid>
+    <guid>070dc867-f05f-40fa-adbb-b6f17b6d5d22</guid>
     <property>
       <category>Information</category>
     </property>
     <property>
       <content>{{velocity}}
-#panelheader("Other users also viewed...")
-#set($discard = $xwiki.jsx.use("RecommendationsCode.OtherUsersAlsoViewedPanel"))
+#panelheader("Recommendations")
+#set($discard = $xwiki.jsx.use("RecommendationsCode.RecommendationsPanel"))
 
-(% id="recommendationsList2" %)
+(% id="recommendationsList4" %)
 
 #panelfooter()
 {{/velocity}}</content>
@@ -215,10 +215,10 @@
         <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
       </use>
     </class>
-    <name>RecommendationsCode.OtherUsersAlsoViewedPanel</name>
+    <name>RecommendationsCode.RecommendationsPanel</name>
     <number>0</number>
     <className>XWiki.JavaScriptExtension</className>
-    <guid>04f05683-161f-4146-b727-e5956a64a87f</guid>
+    <guid>4e6280a6-c00e-4ece-b84c-aa43dfd713dc</guid>
     <property>
       <cache>forbid</cache>
     </property>
@@ -231,60 +231,78 @@
     var easyrecAddress = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecServerAddress')';
     var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
     var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
-    var idList = [];
+    var idList = [[],[],[],[]];
     var splitId = [];
-    var panelDiv = $('#recommendationsList2');
+    var panelDiv = $('#recommendationsList4');
 
     if(!easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty()) {
+    $.when(
       $.ajax({
         dataType: 'jsonp',
         url: easyrecAddress+'api/1.0/json/otherusersalsoviewed?apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage,
-        timeout: 2000,
-        success : function(data, status) {
-          if(data.recommendeditems) {
-            if($.isArray(data.recommendeditems.item)) { // .each() won't work if it isn't an array (one element only)
-              data.recommendeditems.item.each(function(value) {
-                idList.push(value.id); //push recommendations to the list
-              });
-            }
-            else {
-              idList.push(data.recommendeditems.item.id);
-            }
-          }
-        },
-        complete : function(XHR, status) { // Display the results
-          if(status == "success") {
-            var listSize = idList.length;
-            if(listSize == 0) {
-              panelDiv.html('&lt;em&gt;No result&lt;/em&gt;');
-            }
-            else {
-              $.ajax({
-                dataType : 'html',
-                url : '/xwiki/bin/get/RecommendationsCode/DisplayPrettyLinks',
-                method : 'POST',
-                data : 'pagesList='+encodeURIComponent(idList),
-                success : function(data, status) {
-                  panelDiv.html(data);
-                }
-              });
-            }
+      }),
+      $.ajax({
+        dataType: 'jsonp',
+        url: easyrecAddress+'api/1.0/json/relateditems?assoctype=PROFILE_SIMILARITY&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage,
+      }),
+      $.ajax({
+        dataType: 'jsonp',
+        url: easyrecAddress+'api/1.0/json/recommendationsforuser?actiontype=VIEW&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+userId,
+      }),
+      $.ajax({
+        dataType: 'jsonp',
+        url: easyrecAddress+'api/1.0/json/recommendationsforuser?numberOfResults=1&amp;actiontype=EDIT&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+userId,
+      })
+    ).then(function(jqxhr1, jqxhr2, jqxhr3, jqxhr4) {
+      var data = new Array();
+      data[0] = jqxhr1[0];
+      data[1] = jqxhr2[0];
+      data[2] = jqxhr3[0];
+      data[3] = jqxhr4[0];
+
+      for(var i=0; i&lt;=3; i++) {
+        var j=1;
+        if(data[i].recommendeditems) { // .each() won't work if it isn't an array (one element only)
+          if($.isArray(data[i].recommendeditems.item)) {
+            data[i].recommendeditems.item.each(function(value) {
+              if(j&lt;=4 &amp;&amp; $.inArray(idList[0], value.id)&lt;0 &amp;&amp; $.inArray(idList[1], value.id)&lt;0 &amp;&amp; $.inArray(idList[2], value.id)&lt;0) {
+                idList[i].push(value.id);  // Push "edit" recommendations to the list
+                j++;
+              }
+            });
           }
           else {
-            panelDiv.html('&lt;em&gt;Unable to reach easyrec server : '+status+'&lt;/em&gt;');
+            idList[i].push(data[i].recommendeditems.item.id);
           }
         }
+      }
+      $.ajax({
+        dataType : 'html',
+        url : '/xwiki/bin/get/RecommendationsCode/DisplayPrettyLinks',
+        method : 'GET',
+        data : 'pagesList1='+encodeURIComponent(idList[0])+'&amp;pagesList2='+encodeURIComponent(idList[1])+'&amp;pagesList3='+encodeURIComponent(idList[2])+'&amp;pagesList4='+encodeURIComponent(idList[3]),
+        success : function(data, status) {
+          panelDiv.html(data);
+        }
       });
+    });
     }
     else {
       panelDiv.html('&lt;em&gt;You have to set up an easyrec server to use this extension&lt;/em&gt;');
     }
 
+function sortResults(arrayList, prop, asc) {
+  arrayList = arrayList.sort(function(a, b) {
+    if (asc) return (a[prop] &gt; b[prop]) ? 1 : ((a[prop] &lt; b[prop]) ? -1 : 0);
+    else return (b[prop] &gt; a[prop]) ? 1 : ((b[prop] &lt; a[prop]) ? -1 : 0);
+  });
+}
+
   });
 });</code>
     </property>
     <property>
-      <name>Get OtherUsersAlsoViewed recommendations</name>
+      <name>Recommendations</name>
     </property>
     <property>
       <parse>1</parse>

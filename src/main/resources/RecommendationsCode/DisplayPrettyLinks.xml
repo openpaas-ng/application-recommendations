@@ -32,35 +32,43 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1433399155000</creationDate>
-  <date>1433838766000</date>
-  <contentUpdateDate>1433838729000</contentUpdateDate>
+  <date>1436364949000</date>
+  <contentUpdateDate>1436364949000</contentUpdateDate>
   <version>1.1</version>
-  <title/>
+  <title>DisplayPrettyLinks</title>
   <defaultTemplate/>
   <validationScript/>
   <comment/>
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
-  <content>{{groovy}}
-import org.apache.commons.lang.StringEscapeUtils;
-
-println "{{html}}"
-
-if(request.pagesList) {
-  def i = 0
-  for(page in request.get('pagesList').split(',')) {
-    if(i&lt;5 &amp;&amp; xwiki.hasAccessLevel("view", xcontext.getUser(), page) &amp;&amp; xwiki.exists(page)) {
-      def document = xwiki.getDocument(page)
-      if(i != 0) println '&lt;br/&gt;'
-      println '&lt;a href="'+document.getURL()+'"&gt;'+StringEscapeUtils.unescapeHtml(document.getDisplayTitle())+'&lt;/a&gt;'
-      i++
-    }
-  }
-}
-
-println "{{/html}}"
-{{/groovy}}
-
-</content>
+  <content>{{velocity}}
+{{html clean="false"}}
+#if($request.get('pagesList1') || $request.get('pagesList2') || $request.get('pagesList3') || $request.get('pagesList4'))
+  #set($pagesList = [$request.get('pagesList1').split('[,]'), $request.get('pagesList2').split('[,]'), $request.get('pagesList3').split('[,]'), $request.get('pagesList4').split('[,]')])
+  #set($index = 0)
+  #foreach($i in [0,1,2,3])
+    #foreach($j in [0,1,2,3])
+      #set($page = '')
+      #if($pagesList[$j].size()&gt;$i)
+        #set($page = $pagesList[$j][$i])
+      #end
+      #if(!$page.isEmpty() &amp;&amp; $xwiki.hasAccessLevel("view", $xcontext.getUser(), $page) &amp;&amp; $xwiki.exists($page) &amp;&amp; $index&lt;8)
+        #set($document = $xwiki.getDocument($page))
+        #if($j == 0) #set($linkTitle = 'Other users also viewed')
+        #elseif($j == 1) #set($linkTitle = 'Pages with similar content')
+        #elseif($j == 2) #set($linkTitle = 'Based on pages you have visited')
+        #else #set($linkTitle = 'Based on pages you have edited')
+        #end
+        &lt;a href="$document.getURL()" title="$linkTitle"&gt;$document.getDisplayTitle()&lt;/a&gt;&lt;br/&gt;
+        #set($index = $index + 1)
+      #end
+    #end
+  #end
+  #if($index == 0)
+    &lt;em&gt;No recommendation found&lt;/em&gt;
+  #end
+#end
+{{/html}}
+{{/velocity}}</content>
 </xwikidoc>
