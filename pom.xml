@@ -32,7 +32,7 @@
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>application-recommendations</artifactId>
   <name>Recommendations Application</name>
-  <version>0.9.1-SNAPSHOT</version>
+  <version>0.10</version>
   <packaging>xar</packaging>
   <description>Provides a list of pages which could be interesting for the user, based on his history and the pages content.</description>
   <scm>
