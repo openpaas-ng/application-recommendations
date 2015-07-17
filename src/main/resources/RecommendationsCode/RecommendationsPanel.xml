@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1436262914000</creationDate>
-  <date>1436943336000</date>
+  <date>1437132143000</date>
   <contentUpdateDate>1436262914000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -128,7 +128,7 @@
 #panelheader("Recommendations")
 #set($discard = $xwiki.jsx.use("RecommendationsCode.RecommendationsPanel"))
 
-(% id="recommendationsList4" %)
+(% id="recommendationsList" %)
 
 #panelfooter()
 {{/velocity}}</content>
@@ -227,32 +227,24 @@
   $(function(){
 
     // easyrec configuration
-    var userId = '$xcontext.getUser()';
-    var easyrecAddress = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecServerAddress')';
-    var easyrecApiKey = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecApiKey')';
-    var easyrecTenantId = '$xwiki.getDocument('RecommendationsCode.RecEngineConfig').get('easyrecTenantId')';
+    var resultDataElement = $('.recommendations-data').html();
+    var resultData = JSON.parse(decodeURIComponent(resultDataElement).replace(/\+/g, ' '));
+    var easyrecAddress = resultData.easyrecServerAddress;
+    var easyrecApiKey = resultData.easyrecApiKey;
+    var easyrecTenantId = resultData.easyrecTenantId;
+    var sessionId = resultData.sessionId;
+    var userId = resultData.userId;
+    var userBasedState = resultData.userBasedState;
+    var contentBasedState = resultData.contentBasedState;
     var idList = [[],[],[],[]];
-    var splitId = [];
-    var panelDiv = $('#recommendationsList4');
+    var panelDiv = $('#recommendationsList');
 
     if(!easyrecAddress.empty() &amp;&amp; !easyrecApiKey.empty() &amp;&amp; !easyrecTenantId.empty()) {
     $.when(
-      $.ajax({
-        dataType: 'jsonp',
-        url: easyrecAddress+'api/1.0/json/otherusersalsoviewed?apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage,
-      }),
-      $.ajax({
-        dataType: 'jsonp',
-        url: easyrecAddress+'api/1.0/json/relateditems?assoctype=PROFILE_SIMILARITY&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage,
-      }),
-      $.ajax({
-        dataType: 'jsonp',
-        url: easyrecAddress+'api/1.0/json/recommendationsforuser?actiontype=VIEW&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+userId,
-      }),
-      $.ajax({
-        dataType: 'jsonp',
-        url: easyrecAddress+'api/1.0/json/recommendationsforuser?numberOfResults=1&amp;actiontype=EDIT&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+userId,
-      })
+      otherUsersCall(),
+      contentBasedCall(),
+      viewActionCall(),
+      editActionCall()
     ).then(function(jqxhr1, jqxhr2, jqxhr3, jqxhr4) {
       var data = new Array();
       data[0] = jqxhr1[0];
@@ -262,10 +254,10 @@
 
       for(var i=0; i&lt;=3; i++) {
         var j=1;
-        if(data[i].recommendeditems) { // .each() won't work if it isn't an array (one element only)
-          if($.isArray(data[i].recommendeditems.item)) {
+        if(data[i] &amp;&amp; data[i].recommendeditems) {
+          if($.isArray(data[i].recommendeditems.item)) { // .each() won't work if it isn't an array (one element only)
             data[i].recommendeditems.item.each(function(value) {
-              if(j&lt;=4 &amp;&amp; $.inArray(value.id, idList[0])&lt;0 &amp;&amp; $.inArray(value.id, idList[1])&lt;0 &amp;&amp; $.inArray(value.id, idList[2])&lt;0) {
+              if(j&lt;=8 &amp;&amp; $.inArray(value.id, idList[0])&lt;0 &amp;&amp; $.inArray(value.id, idList[1])&lt;0 &amp;&amp; $.inArray(value.id, idList[2])&lt;0) {
                 idList[i].push(value.id);  // Push "edit" recommendations to the list
                 j++;
               }
@@ -291,12 +283,34 @@
       panelDiv.html('&lt;em&gt;You have to set up an easyrec server to use this extension&lt;/em&gt;');
     }
 
-function sortResults(arrayList, prop, asc) {
-  arrayList = arrayList.sort(function(a, b) {
-    if (asc) return (a[prop] &gt; b[prop]) ? 1 : ((a[prop] &lt; b[prop]) ? -1 : 0);
-    else return (b[prop] &gt; a[prop]) ? 1 : ((b[prop] &lt; a[prop]) ? -1 : 0);
-  });
-}
+    function otherUsersCall() {
+      if(userBasedState == 1) return $.ajax({
+        dataType: 'jsonp',
+        url: easyrecAddress+'api/1.0/json/otherusersalsoviewed?apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage,
+      });
+      else return [[]];
+    }
+    function contentBasedCall() {
+      if(contentBasedState == 1) return $.ajax({
+        dataType: 'jsonp',
+        url: easyrecAddress+'api/1.0/json/relateditems?assoctype=PROFILE_SIMILARITY&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage,
+      });
+      else return [[]];
+    }
+    function viewActionCall() {
+      if(userBasedState == 1) return $.ajax({
+        dataType: 'jsonp',
+        url: easyrecAddress+'api/1.0/json/recommendationsforuser?actiontype=VIEW&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+userId,
+      });
+      else return [[]];
+    }
+    function editActionCall() {
+      if(userBasedState == 1) return $.ajax({
+        dataType: 'jsonp',
+        url: easyrecAddress+'api/1.0/json/recommendationsforuser?numberOfResults=1&amp;actiontype=EDIT&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;userid='+userId,
+      });
+      else return [[]];
+    }
 
   });
 });</code>
@@ -305,7 +319,7 @@ function sortResults(arrayList, prop, asc) {
       <name>Recommendations</name>
     </property>
     <property>
-      <parse>1</parse>
+      <parse>0</parse>
     </property>
     <property>
       <use>onDemand</use>

@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1430923093000</creationDate>
-  <date>1432646968000</date>
-  <contentUpdateDate>1432557785000</contentUpdateDate>
+  <date>1437132787000</date>
+  <contentUpdateDate>1437131903000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -61,7 +61,7 @@
         <idField/>
         <multiSelect>1</multiSelect>
         <name>blacklistedSpaces</name>
-        <number>5</number>
+        <number>6</number>
         <picker>1</picker>
         <prettyName>Blacklisted spaces for content-based recommendations (separated with "," )</prettyName>
         <relationalStorage>0</relationalStorage>
@@ -76,11 +76,25 @@
         <valueField/>
         <classType>com.xpn.xwiki.objects.classes.DBListClass</classType>
       </blacklistedSpaces>
+      <contentBasedState>
+        <customDisplay/>
+        <defaultValue>0</defaultValue>
+        <disabled>0</disabled>
+        <displayFormType>radio</displayFormType>
+        <displayType/>
+        <name>contentBasedState</name>
+        <number>5</number>
+        <prettyName>Enable content-based recommendations</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </contentBasedState>
       <easyrecApiKey>
         <customDisplay/>
         <disabled>0</disabled>
         <name>easyrecApiKey</name>
-        <number>3</number>
+        <number>2</number>
         <picker>0</picker>
         <prettyName>easyrec API Key</prettyName>
         <size>30</size>
@@ -93,9 +107,9 @@
         <customDisplay/>
         <disabled>0</disabled>
         <name>easyrecInternalAddress</name>
-        <number>2</number>
+        <number>7</number>
         <picker>0</picker>
-        <prettyName>easyrec Address (for communication between servers)</prettyName>
+        <prettyName>easyrec HTTP Address (optionnal, for communication between servers)</prettyName>
         <size>30</size>
         <unmodifiable>0</unmodifiable>
         <validationMessage/>
@@ -108,7 +122,7 @@
         <name>easyrecServerAddress</name>
         <number>1</number>
         <picker>0</picker>
-        <prettyName>easyrec Server Address ( e.g. http://myeasyrecserver/easyrec-web/ )</prettyName>
+        <prettyName>easyrec Server Main Address ( e.g. https://myeasyrecserver/easyrec-web/ )</prettyName>
         <size>30</size>
         <unmodifiable>0</unmodifiable>
         <validationMessage/>
@@ -119,7 +133,7 @@
         <customDisplay/>
         <disabled>0</disabled>
         <name>easyrecTenantId</name>
-        <number>4</number>
+        <number>3</number>
         <picker>0</picker>
         <prettyName>easyrec tenant ID</prettyName>
         <size>30</size>
@@ -128,6 +142,20 @@
         <validationRegExp/>
         <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
       </easyrecTenantId>
+      <userBasedState>
+        <customDisplay/>
+        <defaultValue>1</defaultValue>
+        <disabled>0</disabled>
+        <displayFormType>radio</displayFormType>
+        <displayType/>
+        <name>userBasedState</name>
+        <number>4</number>
+        <prettyName>Enable user-based recommendations</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </userBasedState>
     </class>
     <name>RecommendationsCode.RecEngineConfig</name>
     <number>0</number>
@@ -135,6 +163,9 @@
     <guid>d5858609-6556-473c-8f2d-57819f39686c</guid>
     <property>
       <blacklistedSpaces/>
+    </property>
+    <property>
+      <contentBasedState>0</contentBasedState>
     </property>
     <property>
       <easyrecApiKey/>
@@ -147,6 +178,9 @@
     </property>
     <property>
       <easyrecTenantId/>
+    </property>
+    <property>
+      <userBasedState>1</userBasedState>
     </property>
   </object>
   <object>
@@ -335,7 +369,8 @@
       <categoryIcon/>
     </property>
     <property>
-      <codeToExecute/>
+      <codeToExecute>#set($discard = $xwiki.jsx.use('RecommendationsCode.RecEngineConfig'))
+{{include reference="RecommendationsCode.Installation"/}}</codeToExecute>
     </property>
     <property>
       <configurationClass>RecommendationsCode.RecEngineConfigClass</configurationClass>
@@ -353,7 +388,7 @@
       <displayInSection>Recommendation Engine</displayInSection>
     </property>
     <property>
-      <heading>Recommendation Engine</heading>
+      <heading>Recommendation Engine Configuration</heading>
     </property>
     <property>
       <iconAttachment/>
@@ -366,6 +401,127 @@
     </property>
     <property>
       <sectionOrder/>
+    </property>
+  </object>
+  <object>
+    <class>
+      <name>XWiki.JavaScriptExtension</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <cache>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>cache</name>
+        <number>5</number>
+        <prettyName>Caching policy</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>long|short|default|forbid</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </cache>
+      <code>
+        <disabled>0</disabled>
+        <name>code</name>
+        <number>2</number>
+        <prettyName>Code</prettyName>
+        <rows>20</rows>
+        <size>50</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </code>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <parse>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>parse</name>
+        <number>4</number>
+        <prettyName>Parse content</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </parse>
+      <use>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>use</name>
+        <number>3</number>
+        <prettyName>Use this extension</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>currentPage|onDemand|always</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </use>
+    </class>
+    <name>RecommendationsCode.RecEngineConfig</name>
+    <number>0</number>
+    <className>XWiki.JavaScriptExtension</className>
+    <guid>fc4acb8d-1f2d-42f9-b211-3fec33b32ace</guid>
+    <property>
+      <cache>default</cache>
+    </property>
+    <property>
+      <code>require(['jquery'], function ($) {
+  $(function(){
+
+    $(".codeToExecute").detach().appendTo('.bottombuttons')
+
+    var contenBasedRadio = $('input[name="RecommendationsCode.RecEngineConfigClass_0_contentBasedState"]');
+    var contenBasedSelect = $('input[name="RecommendationsCode.RecEngineConfigClass_0_contentBasedState"]:checked');
+    if(contenBasedSelect.val() != "1") {
+      $('input[id="RecommendationsCode.RecEngineConfig_RecommendationsCode.RecEngineConfigClass_0_blacklistedSpaces"]').prop( "disabled", true);
+      $('input[id="RecommendationsCode.RecEngineConfig_RecommendationsCode.RecEngineConfigClass_0_easyrecInternalAddress"]').prop( "disabled", true);
+      $('#recommendationsAdminCB').hide();
+    }
+    contenBasedRadio.change(function(){
+      contenBasedSelect = $('input[name="RecommendationsCode.RecEngineConfigClass_0_contentBasedState"]:checked');
+      if(contenBasedSelect.val() == "1") {
+        $('input[id="RecommendationsCode.RecEngineConfig_RecommendationsCode.RecEngineConfigClass_0_blacklistedSpaces"]').prop( "disabled", false );
+        $('input[id="RecommendationsCode.RecEngineConfig_RecommendationsCode.RecEngineConfigClass_0_easyrecInternalAddress"]').prop( "disabled", false );
+        $('#recommendationsAdminCB').show();
+      }
+      else {
+        if(contenBasedSelect.val() != "0") {
+          contenBasedSelect.val(0);
+        }
+        $('input[id="RecommendationsCode.RecEngineConfig_RecommendationsCode.RecEngineConfigClass_0_blacklistedSpaces"]').prop( "disabled", true);
+        $('input[id="RecommendationsCode.RecEngineConfig_RecommendationsCode.RecEngineConfigClass_0_easyrecInternalAddress"]').prop( "disabled", true);
+        $('#recommendationsAdminCB').hide();
+      }
+    });
+  });
+});</code>
+    </property>
+    <property>
+      <name/>
+    </property>
+    <property>
+      <parse>0</parse>
+    </property>
+    <property>
+      <use>onDemand</use>
     </property>
   </object>
   <content/>

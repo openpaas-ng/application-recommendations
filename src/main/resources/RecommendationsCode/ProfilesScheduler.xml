@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432887009000</creationDate>
-  <date>1433337331000</date>
-  <contentUpdateDate>1433337331000</contentUpdateDate>
+  <date>1437132366000</date>
+  <contentUpdateDate>1437132324000</contentUpdateDate>
   <version>1.1</version>
   <title>ProfilesScheduler</title>
   <defaultTemplate/>
@@ -42,30 +42,6 @@
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
-  <class>
-    <name>RecommendationsCode.ProfilesScheduler</name>
-    <customClass/>
-    <customMapping/>
-    <defaultViewSheet/>
-    <defaultEditSheet/>
-    <defaultWeb/>
-    <nameField/>
-    <validationScript/>
-    <recommendationCurrentlyIndexing>
-      <customDisplay/>
-      <defaultValue/>
-      <disabled>0</disabled>
-      <displayFormType>select</displayFormType>
-      <displayType/>
-      <name>recommendationCurrentlyIndexing</name>
-      <number>1</number>
-      <prettyName>Recommendation Currently Indexing</prettyName>
-      <unmodifiable>0</unmodifiable>
-      <validationMessage/>
-      <validationRegExp/>
-      <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-    </recommendationCurrentlyIndexing>
-  </class>
   <object>
     <class>
       <name>XWiki.SchedulerJobClass</name>
@@ -187,22 +163,25 @@
       <jobName>Daily Profiles updates</jobName>
     </property>
     <property>
-      <script>def recommendationCurrentlyIndexing = false
-def pushObj = xwiki.parseGroovyFromPage('RecommendationsCode.PushscriptForScheduler')
-def blacklistedSpaces = xwiki.getDocument('RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass').blacklistedSpaces
-def blacklist = blacklistedSpaces.replace(" ", "', '")
-def yesterday = new Date() - 1
-def updateDate = yesterday.format("yyyy-MM-dd HH:mm:ss")
-def hqlQuery = "where doc.hidden=false and doc.space not in ('${blacklist}') and doc.date &gt;= '${updateDate}'"
-def docList = services.query.hql(hqlQuery).execute()
-for (def document in docList) {
-  try {
-    if(!recommendationCurrentlyIndexing) {
-      recommendationCurrentlyIndexing = true
-      pushObj.send(document, xwiki)
+      <script>def contentBasedState = xwiki.getDocument('RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass').getProperty('contentBasedState').value
+if(contentBasedState == 1) {
+  def recommendationCurrentlyIndexing = false
+  def pushObj = xwiki.parseGroovyFromPage('RecommendationsCode.PushscriptForScheduler')
+  def blacklistedSpaces = xwiki.getDocument('RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass').blacklistedSpaces
+  def blacklist = blacklistedSpaces.replace(" ", "', '")
+  def yesterday = new Date() - 1
+  def updateDate = yesterday.format("yyyy-MM-dd HH:mm:ss")
+  def hqlQuery = "where doc.hidden=false and doc.space not in ('${blacklist}') and doc.date &gt;= '${updateDate}'"
+  def docList = services.query.hql(hqlQuery).execute()
+  for (def document in docList) {
+    try {
+      if(!recommendationCurrentlyIndexing) {
+        recommendationCurrentlyIndexing = true
+        pushObj.send(document, xwiki)
+      }
+    } finally {
+      recommendationCurrentlyIndexing = false
     }
-  } finally {
-    recommendationCurrentlyIndexing = false
   }
 }</script>
     </property>
