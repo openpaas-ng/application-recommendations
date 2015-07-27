@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1430923093000</creationDate>
-  <date>1437132787000</date>
-  <contentUpdateDate>1437131903000</contentUpdateDate>
+  <date>1437993962000</date>
+  <contentUpdateDate>1437139570000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -61,7 +61,7 @@
         <idField/>
         <multiSelect>1</multiSelect>
         <name>blacklistedSpaces</name>
-        <number>6</number>
+        <number>7</number>
         <picker>1</picker>
         <prettyName>Blacklisted spaces for content-based recommendations (separated with "," )</prettyName>
         <relationalStorage>0</relationalStorage>
@@ -83,7 +83,7 @@
         <displayFormType>radio</displayFormType>
         <displayType/>
         <name>contentBasedState</name>
-        <number>5</number>
+        <number>6</number>
         <prettyName>Enable content-based recommendations</prettyName>
         <unmodifiable>0</unmodifiable>
         <validationMessage/>
@@ -107,7 +107,7 @@
         <customDisplay/>
         <disabled>0</disabled>
         <name>easyrecInternalAddress</name>
-        <number>7</number>
+        <number>8</number>
         <picker>0</picker>
         <prettyName>easyrec HTTP Address (optionnal, for communication between servers)</prettyName>
         <size>30</size>
@@ -142,6 +142,19 @@
         <validationRegExp/>
         <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
       </easyrecTenantId>
+      <panelSize>
+        <customDisplay/>
+        <disabled>0</disabled>
+        <name>panelSize</name>
+        <number>4</number>
+        <numberType>integer</numberType>
+        <prettyName>Number of recommendations displayed in the panel</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.NumberClass</classType>
+      </panelSize>
       <userBasedState>
         <customDisplay/>
         <defaultValue>1</defaultValue>
@@ -149,7 +162,7 @@
         <displayFormType>radio</displayFormType>
         <displayType/>
         <name>userBasedState</name>
-        <number>4</number>
+        <number>5</number>
         <prettyName>Enable user-based recommendations</prettyName>
         <unmodifiable>0</unmodifiable>
         <validationMessage/>
@@ -171,13 +184,16 @@
       <easyrecApiKey/>
     </property>
     <property>
-      <easyrecInternalAddress/>
+      <easyrecInternalAddress>http://easyrec.xwiki.com/easyrec-web/</easyrecInternalAddress>
     </property>
     <property>
       <easyrecServerAddress/>
     </property>
     <property>
       <easyrecTenantId/>
+    </property>
+    <property>
+      <panelSize>8</panelSize>
     </property>
     <property>
       <userBasedState>1</userBasedState>
@@ -480,7 +496,7 @@
     <className>XWiki.JavaScriptExtension</className>
     <guid>fc4acb8d-1f2d-42f9-b211-3fec33b32ace</guid>
     <property>
-      <cache>default</cache>
+      <cache>forbid</cache>
     </property>
     <property>
       <code>require(['jquery'], function ($) {
@@ -495,7 +511,7 @@
       $('input[id="RecommendationsCode.RecEngineConfig_RecommendationsCode.RecEngineConfigClass_0_easyrecInternalAddress"]').prop( "disabled", true);
       $('#recommendationsAdminCB').hide();
     }
-    contenBasedRadio.change(function(){
+    contenBasedRadio.change(function(){ 
       contenBasedSelect = $('input[name="RecommendationsCode.RecEngineConfigClass_0_contentBasedState"]:checked');
       if(contenBasedSelect.val() == "1") {
         $('input[id="RecommendationsCode.RecEngineConfig_RecommendationsCode.RecEngineConfigClass_0_blacklistedSpaces"]').prop( "disabled", false );
