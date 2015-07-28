@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431950115000</creationDate>
-  <date>1433834861000</date>
-  <contentUpdateDate>1433834861000</contentUpdateDate>
+  <date>1438084633000</date>
+  <contentUpdateDate>1438084633000</contentUpdateDate>
   <version>1.1</version>
   <title>Pushscript</title>
   <defaultTemplate/>
@@ -45,9 +45,10 @@
   <content>{{groovy}}
 try {
   def recConfigDoc = xwiki.getDocument('RecommendationsCode.RecEngineConfig')
+  def recConfigDoc2 = xwiki.getDocument('RecommendationsCode.RecContentConfig')
   def easyrecAddress = ""
-  if(recConfigDoc.get('easyrecInternalAddress')) {
-    easyrecAddress = recConfigDoc.get('easyrecInternalAddress')
+  if(recConfigDoc2.get('easyrecInternalAddress')) {
+    easyrecAddress = recConfigDoc2.get('easyrecInternalAddress')
   }
   else {
     easyrecAddress = recConfigDoc.get('easyrecServerAddress')
@@ -59,6 +60,7 @@ try {
   }
   def pushedDoc = xwiki.getDocument(request.doc)
   if(!request.get("doc") || !xwiki.exists(request.get("doc"))) {
+    println "0"
     System.out.println("PUSH PROFILE: No document")
   }
   else {
@@ -79,9 +81,11 @@ try {
     def queryURL = "${easyrecAddress}api/1.0/profile/store?apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemid=${docFullName}&amp;profile=${profile}"
     def createItem = xwiki.getURLContent(queryURLItem)
     def sendProfile = xwiki.getURLContent(queryURL)
+    println "1"
   }
 }
 catch(e){
+  println "-1"
   System.out.println("PUSH PROFILE: Exception "+e)
 }
 {{/groovy}}</content>

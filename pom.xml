@@ -31,10 +31,9 @@
   </parent>
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>application-recommendations</artifactId>
-  <name>Recommendations Application</name>
-  <version>0.11</version>
-  <packaging>xar</packaging>
-  <description>Provides a list of pages which could be interesting for the user, based on his history and the pages content.</description>
+  <name>Recommendations Application Parent POM</name>
+  <version>0.12</version>
+  <packaging>pom</packaging>
   <scm>
     <connection>scm:git:git://github.com/xwiki-labs/application-recommendations.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-labs/application-recommendations.git</developerConnection>
@@ -46,30 +45,6 @@
       <name>Yann Flory</name>
     </developer>
   </developers>
-  <properties>
-    <!-- Don't run CLIRR here since there's no Java code. -->
-    <xwiki.clirr.skip>true</xwiki.clirr.skip>
-    <xwiki.extension.name>Recommendations Application</xwiki.extension.name>
-    <xwiki.extension.category>application</xwiki.extension.category>
-  </properties>
-  <build>
-    <!-- Needed to add support for the XAR packaging -->
-    <extensions>
-      <extension>
-        <groupId>org.xwiki.commons</groupId>
-        <artifactId>xwiki-commons-tool-xar-handlers</artifactId>
-        <version>${commons.version}</version>
-      </extension>
-    </extensions>
-    <plugins>
-      <!-- The XAR packaging uses the XAR plugin and thus we need to define what version to use -->
-      <plugin>
-        <groupId>org.xwiki.commons</groupId>
-        <artifactId>xwiki-commons-tool-xar-plugin</artifactId>
-        <version>${commons.version}</version>
-      </plugin>
-    </plugins>
-  </build>
   <distributionManagement>
     <repository>
       <id>xwiki-staging</id>
@@ -77,4 +52,8 @@
       <url>http://nexus.xwiki.org/nexus/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
+  <modules>
+    <module>application-recommendations-core</module>
+    <module>application-recommendations-content</module>
+  </modules>
 </project>

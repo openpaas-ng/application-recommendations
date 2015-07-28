@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431942330000</creationDate>
-  <date>1433773246000</date>
-  <contentUpdateDate>1433773182000</contentUpdateDate>
+  <date>1438083541000</date>
+  <contentUpdateDate>1438083541000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -125,12 +125,14 @@
       <code>require(['jquery'], function ($) {
 $(function(){
   var stop = true;
-
+  $('#blocerror').hide();
+  $('#blocerrorStatus').css({"font-weight" : "bold", "color" : "#FF0000"});
   function loadProfileFor(pages){
     var page = $('&lt;div/&gt;').html(pages[0]).text();
-    var url = "/xwiki/bin/view/RecommendationsCode/Pushscript?doc=" + page;
+    var url = "/xwiki/bin/view/RecommendationsCode/Pushscript?xpage=plain&amp;outputSyntax=plain&amp;doc=" + page;
     $.ajax(url).success(function(res){
-      $('#bloctext').html($('#bloctext').html()+''+page+'&lt;br/&gt;');
+      if(res == "1") {
+      $('#bloctext').html($('#bloctext').html()+''+page+'&lt;br&gt;');
       pages.shift();
       $('#index').val(parseInt($('#index').val()) + 1);
       $('#sent').val(parseInt($('#sent').val()) + 1)
@@ -143,11 +145,16 @@ $(function(){
         $('#start').removeAttr("disabled");
         $('#start').html('Start loading profiles');
       }
-    })
+      }
+      else {
+        throwError(page, $('#index').val());
+      }
+    }).error(function(xhr) {
+      throwError(page, $('#index').val());
+    });
   }
 
   $('#start').click(function(e){
-
     e.preventDefault();
     stop = false;
     var pages = parseInt($('#pages').val());
@@ -158,6 +165,8 @@ $(function(){
     $('#stopLoading').removeAttr("disabled");
     $('#start').html('Profiles loading in progress...');
     $('#startindex').val(index);
+    $('#blocerror').hide();
+    $('#bloctext').show();
     $.ajax({
       url: "/xwiki/bin/get/RecommendationsCode/SendProfile_PagesList?pages="+pages+"&amp;index="+index+""+updateDate,
       type: "POST",
@@ -167,9 +176,7 @@ $(function(){
         $.makeArray(obj);
         loadProfileFor(obj);
       }
-
     });
-
   });
 
   $('#stopLoading').click(function(e){
@@ -182,6 +189,18 @@ $(function(){
   $('#allPages').change(function(e){
     $("#allPages").is(':checked') ? $('#updateTime').attr("disabled", "disabled") : $('#updateTime').removeAttr("disabled");
   });
+
+  function throwError(pageName, index) {
+    $('#bloctext').hide();
+    $('#blocerror').show();
+    $('#blocerrorStatus').html('ERROR : The script stopped while sending the profile of the page "'+pageName+'".');
+    $('#blocerrorInfo').html('&lt;u&gt;Index of the page&lt;/u&gt; : &lt;strong&gt;'+index+'&lt;/strong&gt;&lt;br&gt;&lt;u&gt;You can try to send it again by pressing "Start loading profiles" or you can go to the next page by using the index&lt;/u&gt; : &lt;strong&gt;'+(parseInt(index)+1)+'&lt;/strong&gt;');
+
+    stop = true;
+    $('#stopLoading').attr("disabled", "disabled");
+    $('#start').removeAttr("disabled");
+    $('#start').html('Start loading profiles');
+  }
 
 });
 
@@ -295,11 +314,16 @@ Pages updated since: &lt;input type="text" disabled="disabled" id="updateTime" v
 Start index: &lt;input type="text" id="startindex" value="" disabled="disabled" /&gt;&lt;br /&gt;
 Profiles sent: &lt;input type="text" id="sent" value="0" disabled="disabled" /&gt;&lt;br /&gt;
 &lt;button id="start"&gt;Start loading profiles&lt;/button&gt; &lt;button id="stopLoading" disabled="disabled"&gt;Stop loading&lt;/button&gt;
-
+&lt;br&gt;
 {{/html}}
 
 (% id="bloctext" %)(((
 )))
-
+(% id="blocerror" %)(((
+(% id="blocerrorStatus" %)(((
+)))
+(% id="blocerrorInfo" %)(((
+)))
+)))
 {{/velocity}}</content>
 </xwikidoc>
