@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1430923585000</creationDate>
-  <date>1438080886000</date>
-  <contentUpdateDate>1436358711000</contentUpdateDate>
+  <date>1438093778000</date>
+  <contentUpdateDate>1438088646000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -124,6 +124,11 @@
     <property>
       <code>require(['jquery'], function ($) {
   $(function(){
+if(window.localStorage['XWiki.extension.RecommendationsApplication.clickedLink']) {
+  var clickedLink = window.localStorage['XWiki.extension.RecommendationsApplication.clickedLink'];
+  $('#RecommendationsClickedLink').html('&lt;img width="1" height="1" src="'+clickedLink+'" /&gt;');
+  delete window.localStorage['XWiki.extension.RecommendationsApplication.clickedLink'];
+}
     var userId = '';
     var resultDataElement = $('.recommendations-data').html();
     var resultData = JSON.parse(decodeURIComponent(resultDataElement).replace(/\+/g, ' '));
@@ -250,6 +255,7 @@
 #end
 #set($recommendationsData = "{${dq}fullName${dq} : ${dq}$escapetool.json($doc.fullName)${dq}, ${dq}name${dq} : ${dq}$escapetool.json($doc.name)${dq}, ${dq}space${dq}: ${dq}$escapetool.json($doc.space)${dq}, ${dq}hidden${dq} : $doc.isHidden(), ${dq}userId${dq} : ${dq}$escapetool.json($xcontext.getUser())${dq}, ${dq}deleteForm${dq} : $deleteForm, ${dq}easyrecServerAddress${dq} : ${dq}$configObj.get('easyrecServerAddress')${dq}, ${dq}easyrecApiKey${dq} : ${dq}$configObj.get('easyrecApiKey')${dq}, ${dq}easyrecTenantId${dq} : ${dq}$configObj.get('easyrecTenantId')${dq}, ${dq}userBasedState${dq} : $configObj.getProperty('userBasedState').value, ${dq}contentBasedState${dq} : $contentState, ${dq}sessionId${dq} : ${dq}$request.getHttpServletRequest().getSession().getId()${dq}}")
 &lt;div style="display:none" class="recommendations-data"&gt;$escapetool.url($recommendationsData)&lt;/div&gt;
+&lt;div style="display:none" id="RecommendationsClickedLink"&gt;&lt;/div&gt;
 {{/html}}
 #set($discard = $xwiki.jsx.use("RecommendationsCode.PushData"))
 {{/velocity}}</content>
