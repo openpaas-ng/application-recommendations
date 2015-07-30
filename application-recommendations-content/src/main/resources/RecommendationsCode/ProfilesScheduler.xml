@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432887009000</creationDate>
-  <date>1438084979000</date>
-  <contentUpdateDate>1437132324000</contentUpdateDate>
+  <date>1438173978000</date>
+  <contentUpdateDate>1438088765000</contentUpdateDate>
   <version>1.1</version>
   <title>ProfilesScheduler</title>
   <defaultTemplate/>
@@ -163,11 +163,22 @@
       <jobName>Daily Profiles updates</jobName>
     </property>
     <property>
-      <script>def contentBasedState = xwiki.getDocument('RecommendationsCode.RecContentConfig').getObject('RecommendationsCode.RecContentConfigClass').getProperty('contentBasedState').value
+      <script>def currentWiki = xwiki.getDocument('RecommendationsCode.WebHome').wiki
+def recConfigObj = xwiki.getDocument('RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass')
+def recContentConfigObj = xwiki.getDocument('RecommendationsCode.RecContentConfig').getObject('RecommendationsCode.RecContentConfigClass')
+if(currentWiki != "xwiki") {
+  def recConfigObj2 = xwiki.getDocument('xwiki:RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass')
+  def recContentConfigObj2 = xwiki.getDocument('xwiki:RecommendationsCode.RecContentConfig').getObject('RecommendationsCode.RecContentConfigClass')
+  if(recConfigObj2.getProperty('globalConfig').value == 1 &amp;&amp; recConfigObj.getProperty('globalConfig').value == 1) {
+    recConfigObj = recConfigObj2
+    recContentConfigObj = recContentConfigObj2
+  }
+}
+def contentBasedState = recContentConfigObj.getProperty('contentBasedState').value
 if(contentBasedState == 1) {
   def recommendationCurrentlyIndexing = false
   def pushObj = xwiki.parseGroovyFromPage('RecommendationsCode.PushscriptForScheduler')
-  def blacklistedSpaces = xwiki.getDocument('RecommendationsCode.RecContentConfig').getObject('RecommendationsCode.RecContentConfigClass').blacklistedSpaces
+  def blacklistedSpaces = recContentConfigObj.blacklistedSpaces
   def blacklist = blacklistedSpaces.replace(" ", "', '")
   def yesterday = new Date() - 1
   def updateDate = yesterday.format("yyyy-MM-dd HH:mm:ss")
@@ -177,7 +188,7 @@ if(contentBasedState == 1) {
     try {
       if(!recommendationCurrentlyIndexing) {
         recommendationCurrentlyIndexing = true
-        pushObj.send(document, xwiki)
+        pushObj.send(currentWiki+':'+document, xwiki)
       }
     } finally {
       recommendationCurrentlyIndexing = false
@@ -263,7 +274,7 @@ if(contentBasedState == 1) {
       <allow>1</allow>
     </property>
     <property>
-      <groups>XWiki.XWikiAdminGroup,</groups>
+      <groups/>
     </property>
     <property>
       <levels>view</levels>

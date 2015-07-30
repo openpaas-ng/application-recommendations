@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1433399155000</creationDate>
-  <date>1438154481000</date>
-  <contentUpdateDate>1438154481000</contentUpdateDate>
+  <date>1438243984000</date>
+  <contentUpdateDate>1438243984000</contentUpdateDate>
   <version>1.1</version>
   <title>DisplayPrettyLinks</title>
   <defaultTemplate/>
@@ -48,7 +48,14 @@
   #set($pagesList = [$request.get('pagesList1').split('[,]'), $request.get('pagesList2').split('[,]'), $request.get('pagesList3').split('[,]'), $request.get('pagesList4').split('[,]')])
   #set($pagesURLList = [$request.get('pagesURL1').split('[,]'), $request.get('pagesURL2').split('[,]'), $request.get('pagesURL3').split('[,]'), $request.get('pagesURL4').split('[,]')])
   #set($index = 0)
-  #set($indexMax = $xwiki.getDocument('RecommendationsCode.RecEngineConfig').panelSize)
+  #set($configObj = $xwiki.getDocument('RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass'))
+  #if($doc.wiki != "xwiki")
+    #set($configObjMain = $xwiki.getDocument('xwiki:RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass'))
+    #if($configObjMain.getProperty('globalConfig').value == 1 &amp;&amp; $configObj.getProperty('globalConfig').value == 1)
+      #set($configObj = $configObjMain)
+    #end
+  #end
+  #set($indexMax = $configObj.panelSize)
   #set($Integer = 0)
   #set($indexMax = $Integer.parseInt($indexMax))
   #foreach($i in [0..$indexMax])
@@ -66,7 +73,16 @@
         #elseif($j == 2) #set($linkTitle = 'Based on pages you have visited')
         #else #set($linkTitle = 'Based on pages you have edited')
         #end
-        &lt;a href="$document.getURL()" title="$linkTitle" class="recommendedPageLink" conversionurl="$pageURL"&gt;$document.getDisplayTitle()&lt;/a&gt;&lt;br/&gt;
+        #set($linkName = $document.displayTitle)
+        #set($wikiName = "")
+        ## If the document is in another wiki and its title contains velocity, display the full name (the velocity code would be parsed in the context of the current wiki)
+        #if($document.wiki != $doc.wiki &amp;&amp; $linkName != $document.title)
+          #set($linkName = $document.fullName)
+        #end
+        #if($document.wiki != $doc.wiki)
+          #set($wikiName = " &lt;em&gt;($services.wiki.getById($document.wiki).prettyName)&lt;/em&gt;")
+        #end
+        &lt;a href="$document.getURL()" title="$linkTitle" class="recommendedPageLink" conversionurl="$pageURL"&gt;$linkName$wikiName&lt;/a&gt;&lt;br/&gt;
         #set($index = $index + 1)
       #end
     #end

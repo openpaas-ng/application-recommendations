@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1432814839000</creationDate>
-  <date>1438084645000</date>
-  <contentUpdateDate>1438084645000</contentUpdateDate>
+  <date>1438174000000</date>
+  <contentUpdateDate>1438174000000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -47,17 +47,25 @@
   def send(source, xwiki) {
     try {
       // easyrec server configuration
-      def recConfigDoc = xwiki.getDocument('RecommendationsCode.RecEngineConfig')
-      def recConfigDoc2 = xwiki.getDocument('RecommendationsCode.RecContentConfig')
+      def recConfigObj = xwiki.getDocument('RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass')
+      def recContentConfigObj = xwiki.getDocument('RecommendationsCode.RecContentConfig').getObject('RecommendationsCode.RecContentConfigClass')
+      if(xwiki.getDocument('Main.WebHome').wiki != "xwiki") {
+        def recConfigObj2 = xwiki.getDocument('xwiki:RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass')
+        def recContentConfigObj2 = xwiki.getDocument('xwiki:RecommendationsCode.RecContentConfig').getObject('RecommendationsCode.RecContentConfigClass')
+        if(recConfigObj2.getProperty('globalConfig').value == 1 &amp;&amp; recConfigObj.getProperty('globalConfig').value == 1) {
+          recConfigObj = recConfigObj2
+          recContentConfigObj = recContentConfigObj2
+        }
+      }
       def easyrecAddress = ""
-      if(recConfigDoc2.easyrecInternalAddress) {
-        easyrecAddress = recConfigDoc2.easyrecInternalAddress
+      if(recContentConfigObj.easyrecInternalAddress) {
+        easyrecAddress = recContentConfigObj.easyrecInternalAddress
       }
       else {
-        easyrecAddress = recConfigDoc.easyrecServerAddress
+        easyrecAddress = recConfigObj.easyrecServerAddress
       }
-      def easyrecApiKey = recConfigDoc.easyrecApiKey
-      def easyrecTenantId = recConfigDoc.easyrecTenantId
+      def easyrecApiKey = recConfigObj.easyrecApiKey
+      def easyrecTenantId = recConfigObj.easyrecTenantId
 
       if(easyrecAddress.isEmpty() || easyrecApiKey.isEmpty() || easyrecTenantId.isEmpty()) {
         System.out.println("PUSH PROFILE: wrong easyrec server configuration in XWiki")
@@ -79,13 +87,12 @@
         def profile = URLEncoder.encode("&lt;profile&gt;&lt;title&gt;${title}&lt;/title&gt;&lt;tags&gt;${tags}&lt;/tags&gt;&lt;author&gt;${author}&lt;/author&gt;&lt;space&gt;${space}&lt;/space&gt;&lt;content&gt;${contentList}&lt;/content&gt;&lt;/profile&gt;", "UTF-8")
 
         // REST queries parameters
-        def docDescription = URLEncoder.encode(pushedDoc.getName(), "UTF-8")
-        def docFullName = URLEncoder.encode(pushedDoc.getFullName(), "UTF-8")
+        def docFullName = URLEncoder.encode(pushedDoc.getWiki()+':'+pushedDoc.getFullName(), "UTF-8")
         def docName = URLEncoder.encode(pushedDoc.getName(), "UTF-8")
         def docSpace = URLEncoder.encode(pushedDoc.getSpace(), "UTF-8")
 
         // REST queries
-        def queryURLItem = "${easyrecAddress}api/1.0/sendaction?actiontype=CREATE&amp;apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemdescription=${docDescription}&amp;itemid=${docFullName}&amp;itemurl=/xwiki/bin/view/${docSpace}/${docName}&amp;sessionid=fakesessionidtocreateitems"
+        def queryURLItem = "${easyrecAddress}api/1.0/sendaction?actiontype=CREATE&amp;apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemdescription=${docFullName}&amp;itemid=${docFullName}&amp;itemurl=/1&amp;sessionid=fakesessionidtocreateitems"
         def queryURL = "${easyrecAddress}api/1.0/profile/store?apikey=${easyrecApiKey}&amp;tenantid=${easyrecTenantId}&amp;itemid=${docFullName}&amp;profile=${profile}"
         def createItem = xwiki.getURLContent(queryURLItem)
         def sendProfile = xwiki.getURLContent(queryURL)

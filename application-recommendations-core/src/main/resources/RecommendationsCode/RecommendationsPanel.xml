@@ -32,7 +32,7 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1436262914000</creationDate>
-  <date>1438154503000</date>
+  <date>1438179015000</date>
   <contentUpdateDate>1438088646000</contentUpdateDate>
   <version>1.1</version>
   <title/>
@@ -271,7 +271,7 @@
       }
       $.ajax({
         dataType : 'html',
-        url : '/xwiki/bin/get/RecommendationsCode/DisplayPrettyLinks',
+        url : '/'+XWiki.webapppath+XWiki.servletpath+'get/RecommendationsCode/DisplayPrettyLinks',
         method : 'POST',
         data : 'pagesList1='+encodeURIComponent(idList[0])+'&amp;pagesList2='+encodeURIComponent(idList[1])+'&amp;pagesList3='+encodeURIComponent(idList[2])+'&amp;pagesList4='+encodeURIComponent(idList[3])+'&amp;pagesURL1='+encodeURIComponent(idListLinks[0])+'&amp;pagesURL2='+encodeURIComponent(idListLinks[1])+'&amp;pagesURL3='+encodeURIComponent(idListLinks[2])+'&amp;pagesURL4='+encodeURIComponent(idListLinks[3]),
         success : function(data, status) {
@@ -290,14 +290,14 @@
     function otherUsersCall() {
       if(userBasedState == 1) return $.ajax({
         dataType: 'jsonp',
-        url: easyrecAddress+'api/1.0/json/otherusersalsoviewed?apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage,
+        url: easyrecAddress+'api/1.0/json/otherusersalsoviewed?apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentWiki+':'+XWiki.currentSpace+'.'+XWiki.currentPage,
       });
       else return [[]];
     }
     function contentBasedCall() {
       if(contentBasedState == 1) return $.ajax({
         dataType: 'jsonp',
-        url: easyrecAddress+'api/1.0/json/relateditems?assoctype=PROFILE_SIMILARITY&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentSpace+'.'+XWiki.currentPage,
+        url: easyrecAddress+'api/1.0/json/relateditems?assoctype=PROFILE_SIMILARITY&amp;apikey='+easyrecApiKey+'&amp;tenantid='+easyrecTenantId+'&amp;itemid='+XWiki.currentWiki+':'+XWiki.currentSpace+'.'+XWiki.currentPage,
       });
       else return [[]];
     }

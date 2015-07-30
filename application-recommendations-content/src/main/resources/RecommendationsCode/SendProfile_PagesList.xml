@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431696118000</creationDate>
-  <date>1433773154000</date>
-  <contentUpdateDate>1433773154000</contentUpdateDate>
+  <date>1438174133000</date>
+  <contentUpdateDate>1438174133000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -45,7 +45,17 @@
   <content>{{velocity wiki="false"}}
 #set($index = 0)
 #set($pages = 50)
-#set($blacklistedSpaces = $xwiki.getDocument('RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass').blacklistedSpaces)
+#set($configObj = $xwiki.getDocument('RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass'))
+#if($doc.wiki != "xwiki")
+  #set($configObjMain = $xwiki.getDocument('xwiki:RecommendationsCode.RecEngineConfig').getObject('RecommendationsCode.RecEngineConfigClass'))
+  #if($configObjMain.getProperty('globalConfig').value == 1 &amp;&amp; $configObj.getProperty('globalConfig').value == 1)
+    #set($configContentObj = $xwiki.getDocument('xwiki:RecommendationsCode.RecContentConfig').getObject('RecommendationsCode.RecContentConfigClass'))
+  #else
+    #set($configContentObj = $xwiki.getDocument('RecommendationsCode.RecContentConfig').getObject('RecommendationsCode.RecContentConfigClass'))
+  #end
+#end
+#set($wikiName = "${doc.wiki}:")
+#set($blacklistedSpaces = $configContentObj.blacklistedSpaces)
 #set($blacklist = $blacklistedSpaces.replace(" ", "', '"))
 #set($blacklist = "'$!{blacklist}'")
 #if($request.get("index"))

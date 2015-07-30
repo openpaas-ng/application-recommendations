@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1431942330000</creationDate>
-  <date>1438083541000</date>
-  <contentUpdateDate>1438083541000</contentUpdateDate>
+  <date>1438179419000</date>
+  <contentUpdateDate>1438178049000</contentUpdateDate>
   <version>1.1</version>
   <title/>
   <defaultTemplate/>
@@ -129,7 +129,7 @@ $(function(){
   $('#blocerrorStatus').css({"font-weight" : "bold", "color" : "#FF0000"});
   function loadProfileFor(pages){
     var page = $('&lt;div/&gt;').html(pages[0]).text();
-    var url = "/xwiki/bin/view/RecommendationsCode/Pushscript?xpage=plain&amp;outputSyntax=plain&amp;doc=" + page;
+    var url = $('#pushScriptURL').val()+"?xpage=plain&amp;outputSyntax=plain&amp;doc=" + page;
     $.ajax(url).success(function(res){
       if(res == "1") {
       $('#bloctext').html($('#bloctext').html()+''+page+'&lt;br&gt;');
@@ -168,7 +168,7 @@ $(function(){
     $('#blocerror').hide();
     $('#bloctext').show();
     $.ajax({
-      url: "/xwiki/bin/get/RecommendationsCode/SendProfile_PagesList?pages="+pages+"&amp;index="+index+""+updateDate,
+      url: $('#pagesListURL').val()+"?pages="+pages+"&amp;index="+index+""+updateDate,
       type: "POST",
     }).success(function(res){
       var obj= res.replace("&lt;p&gt;", "").replace("&lt;/p&gt;", "").split('&lt;br/&gt;');
@@ -313,6 +313,8 @@ All pages (except blacklisted ones): &lt;input type="checkbox" checked="checked"
 Pages updated since: &lt;input type="text" disabled="disabled" id="updateTime" value="$!escapetool.xml($datetool.format($format, $value))" /&gt;&lt;br /&gt;
 Start index: &lt;input type="text" id="startindex" value="" disabled="disabled" /&gt;&lt;br /&gt;
 Profiles sent: &lt;input type="text" id="sent" value="0" disabled="disabled" /&gt;&lt;br /&gt;
+&lt;input type="hidden" id="pagesListURL" value="$xwiki.getDocument('RecommendationsCode.SendProfile_PagesList').getURL('get')" /&gt;
+&lt;input type="hidden" id="pushScriptURL" value="$xwiki.getDocument('RecommendationsCode.Pushscript').getURL('view')" /&gt;
 &lt;button id="start"&gt;Start loading profiles&lt;/button&gt; &lt;button id="stopLoading" disabled="disabled"&gt;Stop loading&lt;/button&gt;
 &lt;br&gt;
 {{/html}}
