@@ -32,8 +32,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1436341729000</creationDate>
-  <date>1438081655000</date>
-  <contentUpdateDate>1438081655000</contentUpdateDate>
+  <date>1438251760000</date>
+  <contentUpdateDate>1438251760000</contentUpdateDate>
   <version>1.1</version>
   <title>Installation</title>
   <defaultTemplate/>
@@ -272,6 +272,53 @@
   #set($newList = "$newList,RecommendationsCode.RecommendationsPanel")
   #set($discard = $prefObj.set($propertyName, $newList))
   #set($discard = $prefDoc.save())
+#elseif(($request.removePanelAll &amp;&amp; $doc.wiki == $services.wiki.getMainWikiId()))
+  #foreach($wikiId in $services.wiki.getAllIds())
+    #set($prefDoc = $xwiki.getDocument("${wikiId}:XWiki.XWikiPreferences"))
+    #set($prefObj = $prefDoc.getObject('XWiki.XWikiPreferences'))
+    #foreach($propertyName in ['rightPanels', 'leftPanels'])
+      #set($init = 1)
+      #set($newList = "")
+      #set($panelList = $prefObj.getProperty($propertyName).value.split([',']))
+      #foreach($page in $panelList)
+        #if($page != 'RecommendationsCode.RecommendationsPanel')
+          #if($init == 1)
+            #set($init = 0)
+          #else
+            #set($newList = "$newList,")
+          #end
+          #set($newList = "$newList$page")
+        #end
+      #end
+      #set($discard = $prefObj.set($propertyName, $newList))
+    #end
+    #set($discard = $prefDoc.save())
+  #end
+#elseif(($request.addPanelAll || $request.addPanelAllLeft) &amp;&amp; $doc.wiki == $services.wiki.getMainWikiId())
+  #set($propertyName = 'rightPanels')
+  #if($request.addPanelAllLeft)
+    #set($propertyName = 'leftPanels')
+  #end
+  #foreach($wikiId in $services.wiki.getAllIds())
+    #set($prefDoc = $xwiki.getDocument("${wikiId}:XWiki.XWikiPreferences"))
+    #set($prefObj = $prefDoc.getObject('XWiki.XWikiPreferences'))
+    #set($panelList = $prefObj.getProperty($propertyName).value.split([',']))
+    #set($init = 1)
+    #set($newList = "")
+    #foreach($page in $panelList)
+      #if($page != 'RecommendationsCode.RecommendationsPanel')
+        #if($init == 1)
+          #set($init = 0)
+        #else
+          #set($newList = "$newList,")
+        #end
+        #set($newList = "$newList$page")
+      #end
+    #end
+    #set($newList = "$newList,RecommendationsCode.RecommendationsPanel")
+    #set($discard = $prefObj.set($propertyName, $newList))
+    #set($discard = $prefDoc.save())
+  #end
 #end
 #if($doc.fullName != 'XWiki.XWikiPreferences')
 == Extension &amp; easyrec settings ==
@@ -281,7 +328,17 @@ When the easyrec server is installed, you can create a tenant in easyrec, config
 #else
 ----
 #end
-=== Recommendations panel ===
+#if($services.wiki.getAllIds().size() &gt; 1 &amp;&amp; $doc.wiki == $services.wiki.getMainWikiId())
+  === Recommendations panel (all wikis in the farm) ===
+  #set($currentQueryString = "")
+  #if($doc.fullName == 'XWiki.XWikiPreferences')
+    #set($currentQueryString = "editor=globaladmin&amp;section=Recommendation+Engine&amp;")
+  #end
+  [[Remove the Recommendations panels in all wikis&gt;&gt;$doc.fullName||queryString="${currentQueryString}removePanelAll=1" class="btn btn-primary"]]
+  [[Add the Recommendations panels in all wikis (right side)&gt;&gt;$doc.fullName||queryString="${currentQueryString}addPanelAll=1" class="btn btn-success"]]
+  [[Add the Recommendations panels in all wikis (left side)&gt;&gt;$doc.fullName||queryString="${currentQueryString}addPanelAllLeft=1" class="btn btn-success"]]
+#end
+=== Recommendations panel (this wiki) ===
 #set($prefDoc = $xwiki.getDocument('XWiki.XWikiPreferences'))
 #set($prefObj = $prefDoc.getObject('XWiki.XWikiPreferences'))
 #set($panelList = $prefDoc.rightPanels.split([',']))
